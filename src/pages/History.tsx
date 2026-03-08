@@ -1,15 +1,20 @@
 import { useState, useMemo } from 'react';
 import { useActivities } from '@/hooks/useActivities';
 import { useProfile } from '@/hooks/useProfile';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Sun, CloudRain, PawPrint, Droplets, CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sun, CloudRain, PawPrint, Droplets, CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import PoopIcon from '@/components/PoopIcon';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ICON_COLOR = '#5D4037';
+const TYPE_ORDER = ['walk', 'pee', 'poop'];
 
 const ActivityIcon = ({ type }: { type: string }) => {
   if (type === 'walk') return <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />;
@@ -18,8 +23,10 @@ const ActivityIcon = ({ type }: { type: string }) => {
 };
 
 const History = () => {
+  const { user } = useAuth();
   const { activities } = useActivities();
   const { profile } = useProfile();
+  const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMonth, setViewMonth] = useState(new Date());
   const now = new Date();
@@ -35,19 +42,22 @@ const History = () => {
     return activities.filter(a => isSameDay(parseISO(a.logged_at), selectedDate));
   }, [selectedDate, activities]);
 
-  // Consolidate activities by type for the selected day
+  // Consolidate and sort: walk → pee → poop
   const consolidatedActivities = useMemo(() => {
-    const grouped: Record<string, { type: string; count: number; weather: string[] }> = {};
+    const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[] }> = {};
     dayActivities.forEach(a => {
       if (!grouped[a.activity_type]) {
-        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [] };
+        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [], ids: [] };
       }
       grouped[a.activity_type].count += 1;
+      grouped[a.activity_type].ids.push(a.id);
       if (!grouped[a.activity_type].weather.includes(a.weather)) {
         grouped[a.activity_type].weather.push(a.weather);
       }
     });
-    return Object.values(grouped);
+    return Object.values(grouped).sort(
+      (a, b) => TYPE_ORDER.indexOf(a.type) - TYPE_ORDER.indexOf(b.type)
+    );
   }, [dayActivities]);
 
   const getIconsForDay = (day: Date) => {
@@ -57,6 +67,27 @@ const History = () => {
     if (dayActs.some(a => a.activity_type === 'pee')) types.push('pee');
     if (dayActs.some(a => a.activity_type === 'poop')) types.push('poop');
     return types;
+  };
+
+  const handleDeleteType = async (ids: string[]) => {
+    const { error } = await supabase.from('activity_log').delete().in('id', ids);
+    if (error) {
+      toast.error('Failed to delete');
+    } else {
+      toast.success('Deleted');
+      queryClient.invalidateQueries({ queryKey: ['activities', user?.id] });
+    }
+  };
+
+  const handleDeleteOne = async (ids: string[]) => {
+    // Delete just one entry (reduce count by 1)
+    const { error } = await supabase.from('activity_log').delete().eq('id', ids[ids.length - 1]);
+    if (error) {
+      toast.error('Failed to delete');
+    } else {
+      toast.success('Removed one');
+      queryClient.invalidateQueries({ queryKey: ['activities', user?.id] });
+    }
   };
 
   const canGoForward = viewMonth.getMonth() < now.getMonth() || viewMonth.getFullYear() < now.getFullYear();
@@ -76,26 +107,14 @@ const History = () => {
         {/* Calendar */}
         <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
           <CardContent className="p-4">
-            {/* Month navigation */}
             <div className="flex items-center justify-between mb-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMonth(prev => subMonths(prev, 1))}
-                className="p-1"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setViewMonth(prev => subMonths(prev, 1))} className="p-1">
                 <ChevronLeft className="w-5 h-5" style={{ color: ICON_COLOR }} />
               </Button>
               <h2 className="font-display font-bold" style={{ color: ICON_COLOR }}>
                 {format(viewMonth, 'MMMM yyyy')}
               </h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setViewMonth(prev => addMonths(prev, 1))}
-                disabled={!canGoForward}
-                className="p-1"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setViewMonth(prev => addMonths(prev, 1))} disabled={!canGoForward} className="p-1">
                 <ChevronRight className="w-5 h-5" style={{ color: canGoForward ? ICON_COLOR : '#D7C4A5' }} />
               </Button>
             </div>
@@ -137,7 +156,7 @@ const History = () => {
           </CardContent>
         </Card>
 
-        {/* Day detail — consolidated */}
+        {/* Day detail — consolidated, sorted walk → pee → poop */}
         {selectedDate && (
           <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
@@ -158,10 +177,35 @@ const History = () => {
                             )}
                           </span>
                         </div>
-                        <span className="flex gap-1">
+                        <span className="flex gap-1 mr-1">
                           {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                           {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                         </span>
+                        {item.count > 1 ? (
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleDeleteOne(item.ids)}
+                              className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                              title="Remove one"
+                            >
+                              <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteType(item.ids)}
+                              className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                              title="Delete all"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleDeleteType(item.ids)}
+                            className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
