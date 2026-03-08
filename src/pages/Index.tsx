@@ -81,7 +81,7 @@ const Index = () => {
             <img src={llAvatar} alt="LL" className="w-8 h-8 rounded-full object-contain" />
             <div>
               <h1 className="text-lg font-display font-bold" style={{ color: '#5D4037' }}>
-                {profile.dog_name}'s Path
+                LL Walks
               </h1>
               <p className="text-xs font-body" style={{ color: '#8D6E63' }}>
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
