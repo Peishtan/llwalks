@@ -43,7 +43,7 @@ const History = () => {
     return types;
   };
 
-  const totalWalks = activities.filter(a => a.activity_type === 'walk').length;
+  
 
   if (!profile) return null;
 
