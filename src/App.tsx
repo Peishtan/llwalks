@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Shop from "./pages/Shop";
+import Dashboard from "./pages/Dashboard";
 import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 
@@ -28,7 +28,7 @@ const ProtectedRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
-      <Route path="/shop" element={<Shop />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/history" element={<History />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

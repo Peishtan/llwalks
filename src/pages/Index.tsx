@@ -8,6 +8,7 @@ import TreatCounter from '@/components/TreatCounter';
 import ActionButtons from '@/components/ActionButtons';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
+import llAvatar from '@/assets/ll-avatar.png';
 import { motion } from 'framer-motion';
 
 const Index = () => {
@@ -33,13 +34,16 @@ const Index = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-display font-bold text-foreground">
-              🐩 {profile.dog_name}'s Path
-            </h1>
-            <p className="text-xs text-muted-foreground font-body">
-              Day {profile.path_position} of {totalSpaces}
-            </p>
+          <div className="flex items-center gap-2">
+            <img src={llAvatar} alt="LL" className="w-8 h-8 rounded-full object-cover border-2" style={{ borderColor: '#8D6E63' }} />
+            <div>
+              <h1 className="text-lg font-display font-bold text-foreground">
+                {profile.dog_name}'s Path
+              </h1>
+              <p className="text-xs text-muted-foreground font-body">
+                Day {profile.path_position} of {totalSpaces}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <TreatCounter count={profile.treat_count} />

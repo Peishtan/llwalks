@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { getDaysInMonth } from 'date-fns';
-import poodleAvatar from '@/assets/poodle-avatar.png';
+import llAvatar from '@/assets/ll-avatar.png';
 import boardBg from '@/assets/board-background.jpg';
 
 interface PawPathProps {
@@ -164,8 +164,8 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
               >
                 {isCurrentPos ? (
                   <motion.img
-                    key={`poodle-${position}`}
-                    src={poodleAvatar}
+                    key={`ll-${position}`}
+                    src={llAvatar}
                     alt="LL"
                     className="w-9 h-9 sm:w-12 sm:h-12 object-contain drop-shadow-lg"
                     animate={{ y: [0, -6, 0] }}
