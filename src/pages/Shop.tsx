@@ -8,6 +8,7 @@ import TreatCounter from '@/components/TreatCounter';
 import BottomNav from '@/components/BottomNav';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef } from 'react';
+import { getDaysInMonth } from 'date-fns';
 import { toast } from 'sonner';
 
 const Shop = () => {
