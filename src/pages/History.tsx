@@ -28,7 +28,7 @@ const History = () => {
     const icons: string[] = [];
     if (dayActs.some(a => a.activity_type === 'walk')) icons.push('🐾');
     if (dayActs.some(a => a.activity_type === 'pee')) icons.push('💧');
-    if (dayActs.some(a => a.activity_type === 'poop')) icons.push('💩');
+    if (dayActs.some(a => a.activity_type === 'poop')) icons.push('🍫');
     return icons;
   };
 
