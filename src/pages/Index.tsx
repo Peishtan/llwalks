@@ -83,7 +83,7 @@ const Index = () => {
           <PawPath walkDays={walkDays} isRaining={weather === 'rain'} />
         </motion.div>
 
-        {profile.path_position >= totalSpaces && (
+        {latestWalkDay >= totalSpaces && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
