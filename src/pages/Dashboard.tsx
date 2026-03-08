@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import TreatCounter from '@/components/TreatCounter';
 import { motion } from 'framer-motion';
-import llAvatar from '@/assets/ll-avatar.png';
+import llAvatar from '@/assets/ll-avatar-transparent.png';
 
 const Dashboard = () => {
   const { activities } = useActivities();
