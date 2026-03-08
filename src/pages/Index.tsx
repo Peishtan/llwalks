@@ -47,8 +47,8 @@ const Index = () => {
   if (isLoading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }} className="text-4xl">
-          🐾
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
+          <PawPrint className="w-10 h-10" style={{ color: '#5D4037' }} />
         </motion.div>
       </div>
     );
