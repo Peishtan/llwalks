@@ -40,7 +40,7 @@ const ActionButtons = ({ weather, onToggleWeather, onLogWalk, onLogPee, onLogPoo
             variant="secondary"
             className="h-14 px-6 rounded-2xl text-base font-display font-semibold shadow-md"
           >
-            💩 Poop
+            🍫 Poop
           </Button>
         </motion.div>
       </div>

@@ -119,7 +119,7 @@ const History = () => {
                     {dayActivities.map(a => (
                       <div key={a.id} className="flex items-center gap-3 text-sm bg-muted/50 rounded-xl p-2">
                         <span className="text-lg">
-                          {a.activity_type === 'walk' ? '🐾' : a.activity_type === 'pee' ? '💧' : '💩'}
+                          {a.activity_type === 'walk' ? '🐾' : a.activity_type === 'pee' ? '💧' : '🍫'}
                         </span>
                         <div className="flex-1">
                           <span className="font-semibold capitalize">{a.activity_type}</span>
