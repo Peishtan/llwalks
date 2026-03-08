@@ -67,7 +67,7 @@ const Index = () => {
                 {profile.dog_name}'s Path
               </h1>
               <p className="text-xs font-body" style={{ color: '#8D6E63' }}>
-                Day {profile.path_position} of {totalSpaces}
+                Day {latestWalkDay} of {totalSpaces}
               </p>
             </div>
           </div>
