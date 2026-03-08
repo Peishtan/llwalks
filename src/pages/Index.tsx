@@ -108,7 +108,7 @@ const Index = () => {
         {/* Log a Walk button */}
         <motion.div whileTap={{ scale: 0.97 }}>
           <Button
-            onClick={() => setShowLogDialog(true)}
+            onClick={() => openLogDialog()}
             className="w-full h-16 rounded-2xl text-lg font-display font-bold shadow-lg"
             style={{ background: '#8D6E63', color: '#FFF8F0' }}
           >
