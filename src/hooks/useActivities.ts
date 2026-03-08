@@ -13,10 +13,11 @@ export const useActivities = () => {
   const activitiesQuery = useQuery({
     queryKey: ['activities', user?.id],
     queryFn: async () => {
+      if (!user) return [];
       const { data, error } = await supabase
         .from('activity_log')
         .select('*')
-        .eq('user_id', user!.id)
+        .eq('user_id', user.id)
         .order('logged_at', { ascending: false });
       if (error) throw error;
       return data;

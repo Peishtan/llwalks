@@ -67,14 +67,12 @@ const Dashboard = () => {
     }
   };
 
-  if (!profile) return null;
-
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
           <LayoutDashboard className="w-5 h-5" style={{ color: ICON_COLOR }} />
-          <h1 className="text-xl font-display font-bold" style={{ color: ICON_COLOR }}>LL's Dashboard</h1>
+          <h1 className="text-xl font-display font-bold" style={{ color: ICON_COLOR }}>Dashboard</h1>
         </div>
       </div>
 
@@ -176,12 +174,14 @@ const Dashboard = () => {
                         <span className="text-xs" style={{ color: '#8D6E63' }}>
                           {new Date(a.logged_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                         </span>
-                        <button
-                          onClick={() => handleDelete(a.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
-                        </button>
+                        {user && (
+                          <button
+                            onClick={() => handleDelete(a.id)}
+                            className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                          </button>
+                        )}
                       </CardContent>
                     </Card>
                   </motion.div>

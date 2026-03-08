@@ -1,35 +1,27 @@
 import { useState, useMemo } from 'react';
-import { getDaysInMonth, format } from 'date-fns';
+import { getDaysInMonth } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useActivities } from '@/hooks/useActivities';
 import PawPath from '@/components/PawPath';
 import BottomNav from '@/components/BottomNav';
+import LogWalkDialog from '@/components/LogWalkDialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { motion } from 'framer-motion';
-import { Sun, CloudRain, Droplets, PawPrint, CalendarIcon } from 'lucide-react';
-import PoopIcon from '@/components/PoopIcon';
-import { cn } from '@/lib/utils';
+import { PawPrint } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { profile, isLoading } = useProfile();
   const { activities, logActivity } = useActivities();
-  const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
-  const [logDate, setLogDate] = useState<Date>(new Date());
-  const [didPee, setDidPee] = useState(false);
-  const [didPoop, setDidPoop] = useState(false);
+  const navigate = useNavigate();
 
   const totalSpaces = getDaysInMonth(new Date());
-  const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+  const currentMonth = new Date().toISOString().slice(0, 7);
 
-  // Compute which days of the month had walks
   const walkDays = useMemo(() => {
     const days = new Set<number>();
     activities.forEach(a => {
@@ -47,7 +39,7 @@ const Index = () => {
     return max;
   }, [walkDays]);
 
-  if (isLoading || !profile) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
@@ -57,19 +49,11 @@ const Index = () => {
     );
   }
 
-  const handleSubmitLog = () => {
-    logActivity.mutate({ type: 'walk', weather, date: logDate });
-    if (didPee) logActivity.mutate({ type: 'pee', weather, date: logDate });
-    if (didPoop) logActivity.mutate({ type: 'poop', weather, date: logDate });
+  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean }) => {
+    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date });
+    if (data.didPee) logActivity.mutate({ type: 'pee', weather: data.weather, date: data.date });
+    if (data.didPoop) logActivity.mutate({ type: 'poop', weather: data.weather, date: data.date });
     setShowLogDialog(false);
-  };
-
-  const openLogDialog = () => {
-    setLogDate(new Date());
-    setWeather('sun');
-    setDidPee(false);
-    setDidPoop(false);
-    setShowLogDialog(true);
   };
 
   return (
@@ -88,16 +72,22 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl">
-            👋
-          </Button>
+          {user ? (
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl font-display" style={{ color: '#5D4037' }}>
+              Logout
+            </Button>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={() => navigate('/auth')} className="text-xs rounded-xl font-display" style={{ color: '#5D4037' }}>
+              Login
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Main content */}
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <PawPath walkDays={walkDays} isRaining={weather === 'rain'} />
+          <PawPath walkDays={walkDays} isRaining={false} />
         </motion.div>
 
         {latestWalkDay >= totalSpaces && (
@@ -114,135 +104,24 @@ const Index = () => {
         )}
 
         {/* Log a Walk button */}
-        <motion.div whileTap={{ scale: 0.97 }}>
+        <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
           <Button
-            onClick={() => openLogDialog()}
+            onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
             className="w-full h-16 rounded-2xl text-lg font-display font-bold shadow-lg"
             style={{ background: '#8D6E63', color: '#FFF8F0' }}
           >
             <PawPrint className="w-6 h-6 mr-2" />
-            Log a Walk
+            {user ? 'Log a Walk' : 'Login to Log'}
           </Button>
         </motion.div>
       </div>
 
-      {/* Log dialog */}
-      <Dialog open={showLogDialog} onOpenChange={setShowLogDialog}>
-        <DialogContent className="max-w-sm rounded-2xl border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-          <DialogHeader>
-            <DialogTitle className="font-display font-bold text-xl text-center" style={{ color: '#5D4037' }}>
-              Log a Walk
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-5 pt-2">
-            {/* Date picker */}
-            <div>
-              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Date</p>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-display rounded-2xl h-12"
-                    style={{ borderColor: '#A1887F', background: '#FFF8F0', color: '#5D4037' }}
-                  >
-                    <CalendarIcon className="w-4 h-4 mr-2" style={{ color: '#8D6E63' }} />
-                    {format(logDate, 'EEEE, MMM d, yyyy')}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={logDate}
-                    onSelect={(d) => d && setLogDate(d)}
-                    disabled={(d) => d > new Date()}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            {/* Pee & Poop toggles */}
-            <div>
-              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Did LL also...</p>
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setDidPee(p => !p)}
-                  variant="outline"
-                  className={`flex-1 h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5 ${didPee ? 'ring-2' : ''}`}
-                  style={{
-                    borderColor: '#A1887F',
-                    background: didPee ? '#F5E6D0' : '#FFF8F0',
-                    color: '#5D4037',
-                  }}
-                >
-                  <Droplets className="w-5 h-5" style={{ color: '#5D4037' }} />
-                  <span className="text-xs">Pee</span>
-                </Button>
-                <Button
-                  onClick={() => setDidPoop(p => !p)}
-                  variant="outline"
-                  className={`flex-1 h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5 ${didPoop ? 'ring-2' : ''}`}
-                  style={{
-                    borderColor: '#A1887F',
-                    background: didPoop ? '#F5E6D0' : '#FFF8F0',
-                    color: '#5D4037',
-                  }}
-                >
-                  <PoopIcon className="w-5 h-5" style={{ color: '#5D4037' }} />
-                  <span className="text-xs">Poop</span>
-                </Button>
-              </div>
-            </div>
-
-            {/* Weather */}
-            <div>
-              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Weather</p>
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setWeather('sun')}
-                  variant="outline"
-                  className={`flex-1 h-12 rounded-2xl font-display font-bold ${weather === 'sun' ? 'ring-2' : ''}`}
-                  style={{
-                    borderColor: '#A1887F',
-                    background: weather === 'sun' ? '#F5E6D0' : '#FFF8F0',
-                    color: '#5D4037',
-                  }}
-                >
-                  <Sun className="w-5 h-5 mr-1" style={{ color: '#5D4037' }} />
-                  Sunny
-                </Button>
-                <Button
-                  onClick={() => setWeather('rain')}
-                  variant="outline"
-                  className={`flex-1 h-12 rounded-2xl font-display font-bold ${weather === 'rain' ? 'ring-2' : ''}`}
-                  style={{
-                    borderColor: '#A1887F',
-                    background: weather === 'rain' ? '#E8D5B7' : '#FFF8F0',
-                    color: '#5D4037',
-                  }}
-                >
-                  <CloudRain className="w-5 h-5 mr-1" style={{ color: '#5D4037' }} />
-                  Rainy
-                </Button>
-              </div>
-            </div>
-
-            {/* Submit button */}
-            <motion.div whileTap={{ scale: 0.97 }}>
-              <Button
-                onClick={handleSubmitLog}
-                disabled={logActivity.isPending}
-                className="w-full h-14 rounded-2xl text-base font-display font-bold shadow-md"
-                style={{ background: '#8D6E63', color: '#FFF8F0' }}
-              >
-                <PawPrint className="w-5 h-5 mr-2" />
-                Log Walk
-              </Button>
-            </motion.div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <LogWalkDialog
+        open={showLogDialog}
+        onOpenChange={setShowLogDialog}
+        onSubmit={handleSubmitLog}
+        isPending={logActivity.isPending}
+      />
 
       <BottomNav />
     </div>
