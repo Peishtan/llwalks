@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, Droplets, PawPrint, CalendarIcon } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 import { cn } from '@/lib/utils';
 
 const Index = () => {
