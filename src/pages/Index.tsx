@@ -8,6 +8,7 @@ import TreatCounter from '@/components/TreatCounter';
 import ActionButtons from '@/components/ActionButtons';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
+import llAvatar from '@/assets/ll-avatar.png';
 import { motion } from 'framer-motion';
 
 const Index = () => {
