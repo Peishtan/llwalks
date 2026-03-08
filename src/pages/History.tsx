@@ -131,9 +131,9 @@ const History = () => {
                           <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>{a.activity_type}</span>
                           <span className="ml-2">
                             {a.weather === 'rain' ? (
-                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: '#795548' }} />
+                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             ) : (
-                              <Sun className="w-3.5 h-3.5 inline" style={{ color: '#8D6E63' }} />
+                              <Sun className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             )}
                           </span>
                         </div>
