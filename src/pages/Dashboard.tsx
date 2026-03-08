@@ -1,17 +1,15 @@
 import { useMemo } from 'react';
 import { useActivities } from '@/hooks/useActivities';
-import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Sun, CloudRain, PawPrint, Droplets, LayoutDashboard } from 'lucide-react';
 import PoopIcon from '@/components/PoopIcon';
-import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
-import { startOfWeek, startOfMonth, startOfYear, isAfter, parseISO } from 'date-fns';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 const ICON_COLOR = '#5D4037';
 
@@ -24,34 +22,30 @@ const ActivityIcon = ({ type }: { type: string }) => {
 const Dashboard = () => {
   const { user } = useAuth();
   const { activities } = useActivities();
-  const { profile } = useProfile();
   const queryClient = useQueryClient();
 
   const now = new Date();
   const today = now.toISOString().split('T')[0];
 
-  const walkStats = useMemo(() => {
+  // All-time stats
+  const allTimeStats = useMemo(() => {
+    return {
+      walks: activities.filter(a => a.activity_type === 'walk').length,
+      pees: activities.filter(a => a.activity_type === 'pee').length,
+      poops: activities.filter(a => a.activity_type === 'poop').length,
+    };
+  }, [activities]);
+
+  // Weather breakdown for walks
+  const weatherData = useMemo(() => {
     const walks = activities.filter(a => a.activity_type === 'walk');
-    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
-    const monthStart = startOfMonth(now);
-    const yearStart = startOfYear(now);
-
-    return {
-      today: walks.filter(a => a.logged_at.startsWith(today)).length,
-      week: walks.filter(a => isAfter(parseISO(a.logged_at), weekStart)).length,
-      month: walks.filter(a => isAfter(parseISO(a.logged_at), monthStart)).length,
-      year: walks.filter(a => isAfter(parseISO(a.logged_at), yearStart)).length,
-    };
-  }, [activities, today]);
-
-  const todayStats = useMemo(() => {
-    const todayActs = activities.filter(a => a.logged_at.startsWith(today));
-    return {
-      walks: todayActs.filter(a => a.activity_type === 'walk').length,
-      pees: todayActs.filter(a => a.activity_type === 'pee').length,
-      poops: todayActs.filter(a => a.activity_type === 'poop').length,
-    };
-  }, [activities, today]);
+    const sunny = walks.filter(a => a.weather === 'sun').length;
+    const rainy = walks.filter(a => a.weather === 'rain').length;
+    return [
+      { name: 'Sunny', value: sunny, color: '#F4A261' },
+      { name: 'Rainy', value: rainy, color: '#457B9D' },
+    ].filter(d => d.value > 0);
+  }, [activities]);
 
   const todayActivities = useMemo(() => {
     return activities.filter(a => a.logged_at.startsWith(today));
@@ -77,64 +71,70 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
-        {/* LL avatar card */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-5 flex items-center gap-4">
-              <img src={llAvatar} alt="LL" className="w-16 h-16 rounded-full object-contain" />
-              <div>
-                <h2 className="font-display font-bold text-lg" style={{ color: ICON_COLOR }}>LL's Day</h2>
-                <p className="text-sm" style={{ color: '#8D6E63' }}>
-                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Weather pie chart */}
+        {weatherData.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+              <CardContent className="p-4">
+                <h3 className="font-display font-bold text-center mb-2" style={{ color: ICON_COLOR }}>Walk Weather</h3>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={weatherData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={70}
+                        paddingAngle={2}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                        labelLine={false}
+                      >
+                        {weatherData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Legend
+                        formatter={(value) => <span style={{ color: ICON_COLOR, fontFamily: 'var(--font-display)' }}>{value}</span>}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-        {/* Walk stats: today, week, month, year */}
-        <div className="grid grid-cols-4 gap-2">
-          {[
-            { label: 'Today', value: walkStats.today },
-            { label: 'Week', value: walkStats.week },
-            { label: 'Month', value: walkStats.month },
-            { label: 'Year', value: walkStats.year },
-          ].map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
-              <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-                <CardContent className="p-3 text-center flex flex-col items-center">
-                  <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />
-                  <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{stat.value}</p>
-                  <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>{stat.label}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Today's activity breakdown */}
+        {/* All-time stats: walks, pees, poops */}
         <div className="grid grid-cols-3 gap-3">
-          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-3 text-center flex flex-col items-center">
-              <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />
-              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.walks}</p>
-              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Walks</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-3 text-center flex flex-col items-center">
-              <Droplets className="w-5 h-5" style={{ color: ICON_COLOR }} />
-              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.pees}</p>
-              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Pees</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-3 text-center flex flex-col items-center">
-              <PoopIcon className="w-5 h-5" style={{ color: ICON_COLOR }} />
-              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
-              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Poops</p>
-            </CardContent>
-          </Card>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <PawPrint className="w-6 h-6" style={{ color: ICON_COLOR }} />
+                <p className="text-2xl font-display font-bold mt-2" style={{ color: ICON_COLOR }}>{allTimeStats.walks}</p>
+                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Walks</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <PoopIcon className="w-6 h-6" style={{ color: ICON_COLOR }} />
+                <p className="text-2xl font-display font-bold mt-2" style={{ color: ICON_COLOR }}>{allTimeStats.poops}</p>
+                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Poops</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <Droplets className="w-6 h-6" style={{ color: ICON_COLOR }} />
+                <p className="text-2xl font-display font-bold mt-2" style={{ color: ICON_COLOR }}>{allTimeStats.pees}</p>
+                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Pees</p>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Today's log with delete */}
