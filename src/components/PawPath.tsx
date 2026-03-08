@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { PawPrint } from 'lucide-react';
 import { getDaysInMonth } from 'date-fns';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import boardBg from '@/assets/board-background.jpg';

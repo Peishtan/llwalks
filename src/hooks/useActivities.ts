@@ -73,9 +73,7 @@ export const useActivities = () => {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['activities', user?.id] });
-      if (result.type === 'walk') toast.success('🐾 Walk logged! Keep going!');
-      else if (result.bonus) toast.success(`✨ Bonus! +${result.treatsEarned} treats!`);
-      else if (result.treatsEarned > 0) toast.success(`🦴 +${result.treatsEarned} treat${result.treatsEarned > 1 ? 's' : ''}!`);
+      toast.success('🐾 Walk logged!');
     },
     onError: (err: Error) => toast.error(err.message),
   });
