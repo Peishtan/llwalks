@@ -58,7 +58,7 @@ export const useActivities = () => {
       // Update profile
       const updates: Record<string, number | string> = {};
       if (type === 'walk') {
-        updates.path_position = Math.min((profile.path_position || 0) + 1, 30);
+        updates.path_position = Math.min((profile.path_position || 0) + 1, getDaysInMonth(new Date()));
       }
       if (treatsEarned > 0) {
         updates.treat_count = (profile.treat_count || 0) + treatsEarned;
