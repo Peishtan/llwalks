@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { getDaysInMonth, format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -15,11 +15,30 @@ import { Sun, CloudRain, Droplets, PawPrint } from 'lucide-react';
 const Index = () => {
   const { signOut } = useAuth();
   const { profile, isLoading } = useProfile();
-  const { logActivity } = useActivities();
+  const { activities, logActivity } = useActivities();
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
 
   const totalSpaces = getDaysInMonth(new Date());
+  const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+
+  // Compute which days of the month had walks
+  const walkDays = useMemo(() => {
+    const days = new Set<number>();
+    activities.forEach(a => {
+      if (a.activity_type === 'walk' && a.logged_at.startsWith(currentMonth)) {
+        const day = new Date(a.logged_at).getDate();
+        days.add(day);
+      }
+    });
+    return days;
+  }, [activities, currentMonth]);
+
+  const latestWalkDay = useMemo(() => {
+    let max = 0;
+    walkDays.forEach(d => { if (d > max) max = d; });
+    return max;
+  }, [walkDays]);
 
   if (isLoading || !profile) {
     return (
@@ -48,7 +67,7 @@ const Index = () => {
                 {profile.dog_name}'s Path
               </h1>
               <p className="text-xs font-body" style={{ color: '#8D6E63' }}>
-                Day {profile.path_position} of {totalSpaces}
+                Day {latestWalkDay} of {totalSpaces}
               </p>
             </div>
           </div>
@@ -61,10 +80,10 @@ const Index = () => {
       {/* Main content */}
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <PawPath position={profile.path_position} isRaining={weather === 'rain'} />
+          <PawPath walkDays={walkDays} isRaining={weather === 'rain'} />
         </motion.div>
 
-        {profile.path_position >= totalSpaces && (
+        {latestWalkDay >= totalSpaces && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}

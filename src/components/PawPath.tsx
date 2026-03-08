@@ -5,7 +5,7 @@ import llAvatar from '@/assets/ll-avatar-transparent.png';
 import boardBg from '@/assets/board-background.jpg';
 
 interface PawPathProps {
-  position: number;
+  walkDays: Set<number>; // set of day-of-month numbers (1-indexed) that had walks
   isRaining: boolean;
 }
 
@@ -36,10 +36,17 @@ function generatePathPositions(count: number): { x: number; y: number }[] {
   return positions;
 }
 
-const PawPath = ({ position, isRaining }: PawPathProps) => {
+const PawPath = ({ walkDays, isRaining }: PawPathProps) => {
   const now = new Date();
   const totalSpaces = getDaysInMonth(now);
   const lastIdx = totalSpaces - 1;
+
+  // LL's position = latest day with a walk (0-indexed), or -1 if no walks
+  const position = useMemo(() => {
+    let max = -1;
+    walkDays.forEach(d => { if (d - 1 > max) max = d - 1; });
+    return max;
+  }, [walkDays]);
 
   const pathPositions = useMemo(() => generatePathPositions(totalSpaces), [totalSpaces]);
 
@@ -52,7 +59,6 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Heavy fade so tiles pop */}
         <div className="absolute inset-0" style={{ background: 'rgba(255,252,245,0.55)' }} />
 
         {/* Rain overlay — light grey */}
@@ -96,10 +102,11 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
           })}
         </svg>
 
-        {/* Tiles — exactly totalSpaces (days in month) */}
+        {/* Tiles */}
         {pathPositions.map((pos, i) => {
+          const dayNum = i + 1; // 1-indexed day of month
           const isCurrentPos = i === position;
-          const isVisited = i < position;
+          const hadWalk = walkDays.has(dayNum);
           const color = TILE_COLORS[i % TILE_COLORS.length];
 
           return (
@@ -121,14 +128,14 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                     : 'w-8 h-8 sm:w-10 sm:h-10'}
                 `}
                 style={{
-                  backgroundColor: isCurrentPos ? 'transparent' : isVisited ? '#C9B896' : color,
+                  backgroundColor: isCurrentPos ? 'transparent' : hadWalk ? '#C9B896' : color,
                   border: isCurrentPos
                     ? '3px solid #F5A623'
-                    : `2.5px solid ${isVisited ? '#A1887F' : '#795548'}`,
+                    : `2.5px solid ${hadWalk ? '#A1887F' : '#795548'}`,
                   boxShadow: isCurrentPos
                     ? '0 0 14px rgba(245,166,35,0.5), 0 3px 8px rgba(0,0,0,0.25)'
                     : '0 2px 5px rgba(0,0,0,0.2)',
-                  opacity: isVisited ? 0.85 : 1,
+                  opacity: hadWalk && !isCurrentPos ? 0.85 : 1,
                 }}
               >
                 {isCurrentPos ? (
@@ -140,11 +147,11 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                     animate={{ y: [0, -6, 0] }}
                     transition={{ duration: 0.5 }}
                   />
-                ) : isVisited ? (
+                ) : hadWalk ? (
                   <span className="text-[10px] sm:text-xs" style={{ color: '#795548' }}>🐾</span>
                 ) : (
                   <span className="text-[9px] sm:text-[11px] font-bold" style={{ color: '#5D4037' }}>
-                    {i + 1}
+                    {dayNum}
                   </span>
                 )}
               </div>
@@ -175,7 +182,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
           {now.toLocaleString('default', { month: 'long', year: 'numeric' })}
         </span>
         <span className="text-xs font-display font-bold" style={{ color: '#5D4037' }}>
-          Day {position} / {totalSpaces}
+          Day {position >= 0 ? position + 1 : 0} / {totalSpaces}
         </span>
       </div>
     </div>
