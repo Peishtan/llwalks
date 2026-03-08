@@ -8,9 +8,12 @@ import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { motion } from 'framer-motion';
-import { Sun, CloudRain, Droplets, PawPrint } from 'lucide-react';
+import { Sun, CloudRain, Droplets, PawPrint, CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
   const { signOut } = useAuth();
