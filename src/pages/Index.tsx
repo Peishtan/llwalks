@@ -191,7 +191,7 @@ const Index = () => {
                     className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
                     style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
                   >
-                    <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
+                    <PoopIcon className="w-5 h-5" style={{ color: '#5D4037' }} />
                     <span className="text-xs">Poop</span>
                   </Button>
                 </motion.div>
