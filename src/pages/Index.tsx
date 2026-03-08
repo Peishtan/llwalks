@@ -23,6 +23,8 @@ const Index = () => {
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
   const [logDate, setLogDate] = useState<Date>(new Date());
+  const [didPee, setDidPee] = useState(false);
+  const [didPoop, setDidPoop] = useState(false);
 
   const totalSpaces = getDaysInMonth(new Date());
   const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
