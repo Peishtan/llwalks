@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { PawPrint } from 'lucide-react';
 import { getDaysInMonth } from 'date-fns';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import boardBg from '@/assets/board-background.jpg';
@@ -148,7 +149,7 @@ const PawPath = ({ walkDays, isRaining }: PawPathProps) => {
                     transition={{ duration: 0.5 }}
                   />
                 ) : hadWalk ? (
-                  <span className="text-[10px] sm:text-xs" style={{ color: '#795548' }}>🐾</span>
+                  <PawPrint className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: '#5D4037' }} />
                 ) : (
                   <span className="text-[9px] sm:text-[11px] font-bold" style={{ color: '#5D4037' }}>
                     {dayNum}

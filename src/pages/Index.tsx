@@ -23,6 +23,8 @@ const Index = () => {
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
   const [logDate, setLogDate] = useState<Date>(new Date());
+  const [didPee, setDidPee] = useState(false);
+  const [didPoop, setDidPoop] = useState(false);
 
   const totalSpaces = getDaysInMonth(new Date());
   const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
@@ -55,13 +57,18 @@ const Index = () => {
     );
   }
 
-  const handleLog = (type: 'walk' | 'pee' | 'poop') => {
-    logActivity.mutate({ type, weather, date: logDate });
-    if (type === 'walk') setShowLogDialog(false);
+  const handleSubmitLog = () => {
+    logActivity.mutate({ type: 'walk', weather, date: logDate });
+    if (didPee) logActivity.mutate({ type: 'pee', weather, date: logDate });
+    if (didPoop) logActivity.mutate({ type: 'poop', weather, date: logDate });
+    setShowLogDialog(false);
   };
 
   const openLogDialog = () => {
     setLogDate(new Date());
+    setWeather('sun');
+    setDidPee(false);
+    setDidPoop(false);
     setShowLogDialog(true);
   };
 
@@ -155,46 +162,36 @@ const Index = () => {
                 </PopoverContent>
               </Popover>
             </div>
-            <motion.div whileTap={{ scale: 0.97 }}>
-              <Button
-                onClick={() => handleLog('walk')}
-                disabled={logActivity.isPending}
-                className="w-full h-14 rounded-2xl text-base font-display font-bold shadow-md"
-                style={{ background: '#8D6E63', color: '#FFF8F0' }}
-              >
-                <PawPrint className="w-5 h-5 mr-2" />
-                Log Walk
-              </Button>
-            </motion.div>
-
-            {/* Pee & Poop */}
+            {/* Pee & Poop toggles */}
             <div>
               <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Did LL also...</p>
               <div className="flex gap-3">
-                <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
-                  <Button
-                    onClick={() => handleLog('pee')}
-                    disabled={logActivity.isPending}
-                    variant="outline"
-                    className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
-                    style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
-                  >
-                    <Droplets className="w-5 h-5" style={{ color: '#8D6E63' }} />
-                    <span className="text-xs">Pee</span>
-                  </Button>
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
-                  <Button
-                    onClick={() => handleLog('poop')}
-                    disabled={logActivity.isPending}
-                    variant="outline"
-                    className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
-                    style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
-                  >
-                    <PoopIcon className="w-5 h-5" style={{ color: '#5D4037' }} />
-                    <span className="text-xs">Poop</span>
-                  </Button>
-                </motion.div>
+                <Button
+                  onClick={() => setDidPee(p => !p)}
+                  variant="outline"
+                  className={`flex-1 h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5 ${didPee ? 'ring-2' : ''}`}
+                  style={{
+                    borderColor: '#A1887F',
+                    background: didPee ? '#F5E6D0' : '#FFF8F0',
+                    color: '#5D4037',
+                  }}
+                >
+                  <Droplets className="w-5 h-5" style={{ color: '#5D4037' }} />
+                  <span className="text-xs">Pee</span>
+                </Button>
+                <Button
+                  onClick={() => setDidPoop(p => !p)}
+                  variant="outline"
+                  className={`flex-1 h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5 ${didPoop ? 'ring-2' : ''}`}
+                  style={{
+                    borderColor: '#A1887F',
+                    background: didPoop ? '#F5E6D0' : '#FFF8F0',
+                    color: '#5D4037',
+                  }}
+                >
+                  <PoopIcon className="w-5 h-5" style={{ color: '#5D4037' }} />
+                  <span className="text-xs">Poop</span>
+                </Button>
               </div>
             </div>
 
@@ -210,7 +207,6 @@ const Index = () => {
                     borderColor: '#A1887F',
                     background: weather === 'sun' ? '#F5E6D0' : '#FFF8F0',
                     color: '#5D4037',
-                    ...(weather === 'sun' ? { ringColor: '#D4943A' } : {}),
                   }}
                 >
                   <Sun className="w-5 h-5 mr-1" style={{ color: '#5D4037' }} />
@@ -224,14 +220,26 @@ const Index = () => {
                     borderColor: '#A1887F',
                     background: weather === 'rain' ? '#E8D5B7' : '#FFF8F0',
                     color: '#5D4037',
-                    ...(weather === 'rain' ? { ringColor: '#795548' } : {}),
                   }}
                 >
-                  <CloudRain className="w-5 h-5 mr-1" style={{ color: '#795548' }} />
+                  <CloudRain className="w-5 h-5 mr-1" style={{ color: '#5D4037' }} />
                   Rainy
                 </Button>
               </div>
             </div>
+
+            {/* Submit button */}
+            <motion.div whileTap={{ scale: 0.97 }}>
+              <Button
+                onClick={handleSubmitLog}
+                disabled={logActivity.isPending}
+                className="w-full h-14 rounded-2xl text-base font-display font-bold shadow-md"
+                style={{ background: '#8D6E63', color: '#FFF8F0' }}
+              >
+                <PawPrint className="w-5 h-5 mr-2" />
+                Log Walk
+              </Button>
+            </motion.div>
           </div>
         </DialogContent>
       </Dialog>
