@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Footprints, LayoutDashboard, CalendarDays } from 'lucide-react';
+import { PawPrint, LayoutDashboard, CalendarDays } from 'lucide-react';
 
 const BottomNav = () => {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -11,7 +11,7 @@ const BottomNav = () => {
     <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border z-50">
       <div className="flex justify-around items-center h-14 max-w-lg mx-auto px-4">
         <NavLink to="/" className={linkClass}>
-          <Footprints className="w-5 h-5" style={{ color: '#5D4037' }} />
+          <PawPrint className="w-5 h-5" style={{ color: '#5D4037' }} />
           <span className="text-[10px]" style={{ color: '#5D4037' }}>Path</span>
         </NavLink>
         <NavLink to="/dashboard" className={linkClass}>

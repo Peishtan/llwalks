@@ -1,44 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { getDaysInMonth, format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useActivities } from '@/hooks/useActivities';
 import PawPath from '@/components/PawPath';
-import TreatCounter from '@/components/TreatCounter';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, CloudRain, Droplets, Pencil, Trash2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { Sun, CloudRain, Droplets, PawPrint } from 'lucide-react';
 
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const { profile, isLoading } = useProfile();
-  const { activities, logActivity } = useActivities();
+  const { logActivity } = useActivities();
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const queryClient = useQueryClient();
+  const [showLogDialog, setShowLogDialog] = useState(false);
 
   const totalSpaces = getDaysInMonth(new Date());
-  const today = new Date().toISOString().split('T')[0];
-
-  const todayActivities = useMemo(() => {
-    return activities.filter(a => a.logged_at.startsWith(today));
-  }, [activities, today]);
-
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('activity_log').delete().eq('id', id);
-    if (error) {
-      toast.error('Failed to delete');
-    } else {
-      toast.success('Log deleted');
-      queryClient.invalidateQueries({ queryKey: ['activities', user?.id] });
-    }
-  };
 
   if (isLoading || !profile) {
     return (
@@ -49,6 +30,11 @@ const Index = () => {
       </div>
     );
   }
+
+  const handleLog = (type: 'walk' | 'pee' | 'poop') => {
+    logActivity.mutate({ type, weather });
+    if (type === 'walk') setShowLogDialog(false);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -66,12 +52,9 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <TreatCounter count={profile.treat_count} />
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl">
-              👋
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl">
+            👋
+          </Button>
         </div>
       </div>
 
@@ -94,129 +77,113 @@ const Index = () => {
           </motion.div>
         )}
 
-        {/* Log a Walk section */}
-        <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-          <CardContent className="p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display font-bold text-lg" style={{ color: '#5D4037' }}>Log a Walk</h2>
-              <span className="text-sm font-display" style={{ color: '#8D6E63' }}>
-                {format(new Date(), 'MMM d, yyyy')}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center gap-4">
-              {/* Walk */}
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={() => logActivity.mutate({ type: 'walk', weather })}
-                  disabled={logActivity.isPending}
-                  className="h-14 w-14 rounded-2xl shadow-md flex flex-col items-center justify-center p-0"
-                  style={{ background: '#8D6E63', color: '#FFF8F0' }}
-                >
-                  <span className="text-xl">🐾</span>
-                  <span className="text-[9px] font-display font-bold">Walk</span>
-                </Button>
-              </motion.div>
-
-              {/* Pee */}
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={() => logActivity.mutate({ type: 'pee', weather })}
-                  disabled={logActivity.isPending}
-                  variant="outline"
-                  className="h-14 w-14 rounded-2xl shadow-md flex flex-col items-center justify-center p-0"
-                  style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
-                >
-                  <Droplets className="w-5 h-5" style={{ color: '#8D6E63' }} />
-                  <span className="text-[9px] font-display font-bold">Pee</span>
-                </Button>
-              </motion.div>
-
-              {/* Poop */}
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={() => logActivity.mutate({ type: 'poop', weather })}
-                  disabled={logActivity.isPending}
-                  variant="outline"
-                  className="h-14 w-14 rounded-2xl shadow-md flex flex-col items-center justify-center p-0"
-                  style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
-                >
-                  <span className="text-xl">🍫</span>
-                  <span className="text-[9px] font-display font-bold">Poop</span>
-                </Button>
-              </motion.div>
-
-              {/* Weather toggle */}
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={() => setWeather(w => w === 'sun' ? 'rain' : 'sun')}
-                  variant="outline"
-                  className="h-14 w-14 rounded-2xl shadow-md flex flex-col items-center justify-center p-0"
-                  style={{ borderColor: '#A1887F', background: weather === 'sun' ? '#FFF8F0' : '#E8D5B7', color: '#5D4037' }}
-                >
-                  {weather === 'sun' ? (
-                    <Sun className="w-5 h-5" style={{ color: '#D4943A' }} />
-                  ) : (
-                    <CloudRain className="w-5 h-5" style={{ color: '#795548' }} />
-                  )}
-                  <span className="text-[9px] font-display font-bold">{weather === 'sun' ? 'Sun' : 'Rain'}</span>
-                </Button>
-              </motion.div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Today's logs */}
-        {todayActivities.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="font-display font-bold text-sm" style={{ color: '#5D4037' }}>Today's Log</h3>
-            <AnimatePresence>
-              {todayActivities.map(a => (
-                <motion.div
-                  key={a.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                >
-                  <Card className="border" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-                    <CardContent className="p-3 flex items-center gap-3">
-                      <span className="text-lg">
-                        {a.activity_type === 'walk' ? '🐾' : a.activity_type === 'pee' ? '💧' : '🍫'}
-                      </span>
-                      <div className="flex-1">
-                        <span className="font-display font-semibold capitalize text-sm" style={{ color: '#5D4037' }}>
-                          {a.activity_type}
-                        </span>
-                        <span className="ml-2">
-                          {a.weather === 'rain' ? (
-                            <CloudRain className="w-3.5 h-3.5 inline" style={{ color: '#795548' }} />
-                          ) : (
-                            <Sun className="w-3.5 h-3.5 inline" style={{ color: '#D4943A' }} />
-                          )}
-                        </span>
-                      </div>
-                      <span className="text-xs" style={{ color: '#8D6E63' }}>
-                        {new Date(a.logged_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                      </span>
-                      {a.treats_earned > 0 && (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#F5E6D0', color: '#8D6E63' }}>
-                          +{a.treats_earned} 🦴
-                        </span>
-                      )}
-                      <button
-                        onClick={() => handleDelete(a.id)}
-                        className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
-                      </button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
+        {/* Log a Walk button */}
+        <motion.div whileTap={{ scale: 0.97 }}>
+          <Button
+            onClick={() => setShowLogDialog(true)}
+            className="w-full h-16 rounded-2xl text-lg font-display font-bold shadow-lg"
+            style={{ background: '#8D6E63', color: '#FFF8F0' }}
+          >
+            <PawPrint className="w-6 h-6 mr-2" />
+            Log a Walk
+          </Button>
+        </motion.div>
       </div>
+
+      {/* Log dialog */}
+      <Dialog open={showLogDialog} onOpenChange={setShowLogDialog}>
+        <DialogContent className="max-w-sm rounded-2xl border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+          <DialogHeader>
+            <DialogTitle className="font-display font-bold text-xl text-center" style={{ color: '#5D4037' }}>
+              Log a Walk
+            </DialogTitle>
+            <p className="text-sm text-center" style={{ color: '#8D6E63' }}>
+              {format(new Date(), 'EEEE, MMM d, yyyy')}
+            </p>
+          </DialogHeader>
+
+          <div className="space-y-5 pt-2">
+            {/* Log walk */}
+            <motion.div whileTap={{ scale: 0.97 }}>
+              <Button
+                onClick={() => handleLog('walk')}
+                disabled={logActivity.isPending}
+                className="w-full h-14 rounded-2xl text-base font-display font-bold shadow-md"
+                style={{ background: '#8D6E63', color: '#FFF8F0' }}
+              >
+                <PawPrint className="w-5 h-5 mr-2" />
+                Log Walk
+              </Button>
+            </motion.div>
+
+            {/* Pee & Poop */}
+            <div>
+              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Did LL also...</p>
+              <div className="flex gap-3">
+                <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+                  <Button
+                    onClick={() => handleLog('pee')}
+                    disabled={logActivity.isPending}
+                    variant="outline"
+                    className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
+                    style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
+                  >
+                    <Droplets className="w-5 h-5" style={{ color: '#8D6E63' }} />
+                    <span className="text-xs">Pee</span>
+                  </Button>
+                </motion.div>
+                <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+                  <Button
+                    onClick={() => handleLog('poop')}
+                    disabled={logActivity.isPending}
+                    variant="outline"
+                    className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
+                    style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
+                  >
+                    <span className="text-lg">🍫</span>
+                    <span className="text-xs">Poop</span>
+                  </Button>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Weather */}
+            <div>
+              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Weather</p>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setWeather('sun')}
+                  variant="outline"
+                  className={`flex-1 h-12 rounded-2xl font-display font-bold ${weather === 'sun' ? 'ring-2' : ''}`}
+                  style={{
+                    borderColor: '#A1887F',
+                    background: weather === 'sun' ? '#F5E6D0' : '#FFF8F0',
+                    color: '#5D4037',
+                    ...(weather === 'sun' ? { ringColor: '#D4943A' } : {}),
+                  }}
+                >
+                  <Sun className="w-5 h-5 mr-1" style={{ color: '#D4943A' }} />
+                  Sunny
+                </Button>
+                <Button
+                  onClick={() => setWeather('rain')}
+                  variant="outline"
+                  className={`flex-1 h-12 rounded-2xl font-display font-bold ${weather === 'rain' ? 'ring-2' : ''}`}
+                  style={{
+                    borderColor: '#A1887F',
+                    background: weather === 'rain' ? '#E8D5B7' : '#FFF8F0',
+                    color: '#5D4037',
+                    ...(weather === 'rain' ? { ringColor: '#795548' } : {}),
+                  }}
+                >
+                  <CloudRain className="w-5 h-5 mr-1" style={{ color: '#795548' }} />
+                  Rainy
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNav />
     </div>
