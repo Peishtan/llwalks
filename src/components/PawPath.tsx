@@ -9,15 +9,11 @@ interface PawPathProps {
   isRaining: boolean;
 }
 
-// Tile colors cycling through nature tones
+// Tile colors — warm brown, orange, beige pattern
 const TILE_COLORS = [
-  '#7CB342', '#42A5F5', '#FFCA28', '#8D6E63', '#EF5350',
-  '#66BB6A', '#5C6BC0', '#FFA726', '#AB47BC', '#26A69A',
-  '#9CCC65', '#29B6F6', '#FFD54F', '#A1887F', '#EC407A',
-  '#81C784', '#7986CB', '#FFB74D', '#CE93D8', '#4DB6AC',
-  '#AED581', '#4FC3F7', '#FFE082', '#BCAAA4', '#F48FB1',
-  '#C5E1A5', '#81D4FA', '#FFF176', '#D7CCC8', '#F8BBD0',
-  '#DCE775',
+  '#A1887F', '#E8A957', '#D7C4A5',
+  '#8D6E63', '#F5A623', '#E8D5B7',
+  '#795548', '#D4943A', '#C9B896',
 ];
 
 // Nature decorations for tiles
@@ -119,7 +115,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                 y1={prev.y}
                 x2={pos.x}
                 y2={pos.y}
-                stroke={isVisitedSegment ? '#4CAF50' : '#8D6E63'}
+                stroke={isVisitedSegment ? '#8D6E63' : '#A1887F'}
                 strokeWidth="1.2"
                 strokeDasharray={isVisitedSegment ? 'none' : '2,1'}
                 opacity={isVisitedSegment ? 0.8 : 0.4}
@@ -188,7 +184,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                   ${isVisited ? 'opacity-90' : !isCurrentPos ? 'opacity-70' : ''}
                 `}
                 style={{
-                  backgroundColor: isVisited ? '#66BB6A' : color,
+                  backgroundColor: isVisited ? '#A8D5A2' : color,
                   boxShadow: isCurrentPos
                     ? '0 0 16px rgba(255,200,0,0.6), 0 4px 8px rgba(0,0,0,0.3)'
                     : '0 2px 4px rgba(0,0,0,0.25)',
