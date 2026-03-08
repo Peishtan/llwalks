@@ -11,6 +11,7 @@ import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { startOfWeek, startOfMonth, startOfYear, isAfter, parseISO } from 'date-fns';
 
 const ICON_COLOR = '#5D4037';
 
@@ -26,7 +27,22 @@ const Dashboard = () => {
   const { profile } = useProfile();
   const queryClient = useQueryClient();
 
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+
+  const walkStats = useMemo(() => {
+    const walks = activities.filter(a => a.activity_type === 'walk');
+    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+    const monthStart = startOfMonth(now);
+    const yearStart = startOfYear(now);
+
+    return {
+      today: walks.filter(a => a.logged_at.startsWith(today)).length,
+      week: walks.filter(a => isAfter(parseISO(a.logged_at), weekStart)).length,
+      month: walks.filter(a => isAfter(parseISO(a.logged_at), monthStart)).length,
+      year: walks.filter(a => isAfter(parseISO(a.logged_at), yearStart)).length,
+    };
+  }, [activities, today]);
 
   const todayStats = useMemo(() => {
     const todayActs = activities.filter(a => a.logged_at.startsWith(today));
