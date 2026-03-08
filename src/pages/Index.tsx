@@ -55,8 +55,13 @@ const Index = () => {
   }
 
   const handleLog = (type: 'walk' | 'pee' | 'poop') => {
-    logActivity.mutate({ type, weather });
+    logActivity.mutate({ type, weather, date: logDate });
     if (type === 'walk') setShowLogDialog(false);
+  };
+
+  const openLogDialog = () => {
+    setLogDate(new Date());
+    setShowLogDialog(true);
   };
 
   return (

@@ -52,6 +52,7 @@ export const useActivities = () => {
         weather,
         treats_earned: treatsEarned,
         bonus_earned: bonus,
+        ...(date ? { logged_at: date.toISOString() } : {}),
       });
       if (error) throw error;
 
