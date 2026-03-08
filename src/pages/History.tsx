@@ -6,6 +6,7 @@ import BottomNav from '@/components/BottomNav';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, PawPrint, Droplets, CalendarDays } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 
 const ICON_COLOR = '#5D4037';
 
