@@ -42,7 +42,7 @@ const Index = () => {
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src={llAvatar} alt="LL" className="w-8 h-8 rounded-full object-contain" style={{ background: '#F5E6D0' }} />
+            <img src={llAvatar} alt="LL" className="w-8 h-8 rounded-full object-contain" />
             <div>
               <h1 className="text-lg font-display font-bold" style={{ color: '#5D4037' }}>
                 {profile.dog_name}'s Path

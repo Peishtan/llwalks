@@ -57,7 +57,7 @@ const Dashboard = () => {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
             <CardContent className="p-5 flex items-center gap-4">
-              <img src={llAvatar} alt="LL" className="w-16 h-16 rounded-full object-contain" style={{ background: '#F5E6D0' }} />
+              <img src={llAvatar} alt="LL" className="w-16 h-16 rounded-full object-contain" />
               <div>
                 <h2 className="font-display font-bold text-lg" style={{ color: '#5D4037' }}>LL's Day</h2>
                 <p className="text-sm" style={{ color: '#8D6E63' }}>
