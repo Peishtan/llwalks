@@ -42,8 +42,8 @@ const Dashboard = () => {
     const sunny = walks.filter(a => a.weather === 'sun').length;
     const rainy = walks.filter(a => a.weather === 'rain').length;
     return [
-      { name: 'Sunny', value: sunny, color: '#F4A261' },
-      { name: 'Rainy', value: rainy, color: '#457B9D' },
+      { name: 'Sunny', value: sunny, color: '#D4943A' },
+      { name: 'Rainy', value: rainy, color: '#5D4037' },
     ].filter(d => d.value > 0);
   }, [activities]);
 
