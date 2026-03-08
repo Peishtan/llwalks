@@ -25,7 +25,7 @@ export const useActivities = () => {
   });
 
   const logActivity = useMutation({
-    mutationFn: async ({ type, weather }: { type: 'walk' | 'pee' | 'poop'; weather: 'sun' | 'rain' }) => {
+    mutationFn: async ({ type, weather, date }: { type: 'walk' | 'pee' | 'poop'; weather: 'sun' | 'rain'; date?: Date }) => {
       if (!user || !profile) throw new Error('Not authenticated');
 
       let treatsEarned = 0;
@@ -52,6 +52,7 @@ export const useActivities = () => {
         weather,
         treats_earned: treatsEarned,
         bonus_earned: bonus,
+        ...(date ? { logged_at: date.toISOString() } : {}),
       });
       if (error) throw error;
 
