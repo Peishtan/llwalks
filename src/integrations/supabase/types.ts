@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_log: {
+        Row: {
+          activity_type: string
+          bonus_earned: boolean
+          created_at: string
+          id: string
+          logged_at: string
+          treats_earned: number
+          user_id: string
+          weather: string
+        }
+        Insert: {
+          activity_type: string
+          bonus_earned?: boolean
+          created_at?: string
+          id?: string
+          logged_at?: string
+          treats_earned?: number
+          user_id: string
+          weather?: string
+        }
+        Update: {
+          activity_type?: string
+          bonus_earned?: boolean
+          created_at?: string
+          id?: string
+          logged_at?: string
+          treats_earned?: number
+          user_id?: string
+          weather?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_id: string
+          created_at: string
+          current_month: string
+          dog_name: string
+          id: string
+          path_position: number
+          treat_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_id?: string
+          created_at?: string
+          current_month?: string
+          dog_name?: string
+          id?: string
+          path_position?: number
+          treat_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_id?: string
+          created_at?: string
+          current_month?: string
+          dog_name?: string
+          id?: string
+          path_position?: number
+          treat_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_unlockables: {
+        Row: {
+          equipped: boolean
+          id: string
+          item_id: string
+          item_type: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          equipped?: boolean
+          id?: string
+          item_id: string
+          item_type: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          equipped?: boolean
+          id?: string
+          item_id?: string
+          item_type?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
