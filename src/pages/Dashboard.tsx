@@ -17,7 +17,7 @@ const ICON_COLOR = '#5D4037';
 const ActivityIcon = ({ type }: { type: string }) => {
   if (type === 'walk') return <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />;
   if (type === 'pee') return <Droplets className="w-5 h-5" style={{ color: ICON_COLOR }} />;
-  return <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>;
+  return <PoopIcon className="w-5 h-5" style={{ color: ICON_COLOR }} />;
 };
 
 const Dashboard = () => {
