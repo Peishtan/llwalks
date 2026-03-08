@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getDaysInMonth } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useActivities } from '@/hooks/useActivities';
@@ -14,6 +15,8 @@ const Index = () => {
   const { profile, isLoading } = useProfile();
   const { logActivity } = useActivities();
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
+
+  const totalSpaces = getDaysInMonth(new Date());
 
   if (isLoading || !profile) {
     return (
@@ -32,10 +35,10 @@ const Index = () => {
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-display font-bold text-foreground">
-              🐕 {profile.dog_name}'s Path
+              🐩 {profile.dog_name}'s Path
             </h1>
             <p className="text-xs text-muted-foreground font-body">
-              Day {profile.path_position} of 30
+              Day {profile.path_position} of {totalSpaces}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -53,7 +56,7 @@ const Index = () => {
           <PawPath position={profile.path_position} isRaining={weather === 'rain'} />
         </motion.div>
 
-        {profile.path_position >= 30 && (
+        {profile.path_position >= totalSpaces && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
