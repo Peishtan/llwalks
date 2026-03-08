@@ -4,6 +4,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
+import LogWalkDialog from '@/components/LogWalkDialog';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, PawPrint, Droplets, CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const ICON_COLOR = '#5D4037';
 const TYPE_ORDER = ['walk', 'pee', 'poop'];
@@ -24,11 +26,13 @@ const ActivityIcon = ({ type }: { type: string }) => {
 
 const History = () => {
   const { user } = useAuth();
-  const { activities } = useActivities();
+  const { activities, logActivity } = useActivities();
   const { profile } = useProfile();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMonth, setViewMonth] = useState(new Date());
+  const [showLogDialog, setShowLogDialog] = useState(false);
   const now = new Date();
 
   const calendarDays = useMemo(() => {
@@ -42,7 +46,6 @@ const History = () => {
     return activities.filter(a => isSameDay(parseISO(a.logged_at), selectedDate));
   }, [selectedDate, activities]);
 
-  // Consolidate and sort: walk → pee → poop
   const consolidatedActivities = useMemo(() => {
     const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[] }> = {};
     dayActivities.forEach(a => {
@@ -80,7 +83,6 @@ const History = () => {
   };
 
   const handleDeleteOne = async (ids: string[]) => {
-    // Delete just one entry (reduce count by 1)
     const { error } = await supabase.from('activity_log').delete().eq('id', ids[ids.length - 1]);
     if (error) {
       toast.error('Failed to delete');
@@ -90,9 +92,14 @@ const History = () => {
     }
   };
 
-  const canGoForward = viewMonth.getMonth() < now.getMonth() || viewMonth.getFullYear() < now.getFullYear();
+  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean }) => {
+    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date });
+    if (data.didPee) logActivity.mutate({ type: 'pee', weather: data.weather, date: data.date });
+    if (data.didPoop) logActivity.mutate({ type: 'poop', weather: data.weather, date: data.date });
+    setShowLogDialog(false);
+  };
 
-  if (!profile) return null;
+  const canGoForward = viewMonth.getMonth() < now.getMonth() || viewMonth.getFullYear() < now.getFullYear();
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -104,6 +111,18 @@ const History = () => {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+        {/* Log a Walk button */}
+        <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
+          <Button
+            onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
+            className="w-full h-14 rounded-2xl text-lg font-display font-bold shadow-lg"
+            style={{ background: '#8D6E63', color: '#FFF8F0' }}
+          >
+            <PawPrint className="w-5 h-5 mr-2" />
+            {user ? 'Log a Walk' : 'Login to Log'}
+          </Button>
+        </motion.div>
+
         {/* Calendar */}
         <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
           <CardContent className="p-4">
@@ -156,7 +175,7 @@ const History = () => {
           </CardContent>
         </Card>
 
-        {/* Day detail — consolidated, sorted walk → pee → poop */}
+        {/* Day detail */}
         {selectedDate && (
           <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
@@ -181,30 +200,32 @@ const History = () => {
                           {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                           {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                         </span>
-                        {item.count > 1 ? (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => handleDeleteOne(item.ids)}
-                              className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                              title="Remove one"
-                            >
-                              <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
-                            </button>
+                        {user && (
+                          item.count > 1 ? (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => handleDeleteOne(item.ids)}
+                                className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                title="Remove one"
+                              >
+                                <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteType(item.ids)}
+                                className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                title="Delete all"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                              </button>
+                            </div>
+                          ) : (
                             <button
                               onClick={() => handleDeleteType(item.ids)}
                               className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                              title="Delete all"
                             >
                               <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
                             </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => handleDeleteType(item.ids)}
-                            className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
-                          </button>
+                          )
                         )}
                       </div>
                     ))}
@@ -215,6 +236,13 @@ const History = () => {
           </motion.div>
         )}
       </div>
+
+      <LogWalkDialog
+        open={showLogDialog}
+        onOpenChange={setShowLogDialog}
+        onSubmit={handleSubmitLog}
+        isPending={logActivity.isPending}
+      />
 
       <BottomNav />
     </div>
