@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import TreatCounter from '@/components/TreatCounter';
 import BottomNav from '@/components/BottomNav';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 
 const Shop = () => {
@@ -15,14 +15,16 @@ const Shop = () => {
   const { unlockables, purchaseItem, unlockBadge } = useUnlockables();
   const { activities } = useActivities();
 
-  const unlockedIds = new Set(unlockables.map(u => u.item_id));
+  const unlockedIds = useMemo(() => new Set(unlockables.map(u => u.item_id)), [unlockables]);
+  const checkedRef = useRef<Set<string>>(new Set());
 
   // Auto-check badges
   useEffect(() => {
     if (!profile || !activities) return;
 
     const checkBadge = (id: string, condition: boolean) => {
-      if (condition && !unlockedIds.has(id)) {
+      if (condition && !unlockedIds.has(id) && !checkedRef.current.has(id)) {
+        checkedRef.current.add(id);
         unlockBadge.mutate(id);
         const badge = BADGE_DEFINITIONS.find(b => b.id === id);
         if (badge) toast.success(`🏅 Badge earned: ${badge.name}!`);
