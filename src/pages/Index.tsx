@@ -21,6 +21,7 @@ const Index = () => {
   const { activities, logActivity } = useActivities();
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
+  const [logDate, setLogDate] = useState<Date>(new Date());
 
   const totalSpaces = getDaysInMonth(new Date());
   const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
