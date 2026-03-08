@@ -80,7 +80,7 @@ const Index = () => {
       {/* Main content */}
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <PawPath position={profile.path_position} isRaining={weather === 'rain'} />
+          <PawPath walkDays={walkDays} isRaining={weather === 'rain'} />
         </motion.div>
 
         {profile.path_position >= totalSpaces && (
