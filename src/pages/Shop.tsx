@@ -8,6 +8,7 @@ import TreatCounter from '@/components/TreatCounter';
 import BottomNav from '@/components/BottomNav';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef } from 'react';
+import { getDaysInMonth } from 'date-fns';
 import { toast } from 'sonner';
 
 const Shop = () => {
@@ -34,7 +35,7 @@ const Shop = () => {
     const walks = activities.filter(a => a.activity_type === 'walk');
     checkBadge('first-walk', walks.length >= 1);
     checkBadge('rainy-walker', walks.some(w => w.weather === 'rain'));
-    checkBadge('path-complete', profile.path_position >= 30);
+    checkBadge('path-complete', profile.path_position >= getDaysInMonth(new Date()));
     checkBadge('treats-50', profile.treat_count >= 50);
     checkBadge('treats-100', profile.treat_count >= 100);
 

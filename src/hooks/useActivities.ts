@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { getDaysInMonth } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from './useProfile';
 import { toast } from 'sonner';
@@ -57,7 +58,7 @@ export const useActivities = () => {
       // Update profile
       const updates: Record<string, number | string> = {};
       if (type === 'walk') {
-        updates.path_position = Math.min((profile.path_position || 0) + 1, 30);
+        updates.path_position = Math.min((profile.path_position || 0) + 1, getDaysInMonth(new Date()));
       }
       if (treatsEarned > 0) {
         updates.treat_count = (profile.treat_count || 0) + treatsEarned;
