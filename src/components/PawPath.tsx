@@ -16,14 +16,6 @@ const TILE_COLORS = [
   '#795548', '#D4943A', '#C9B896',
 ];
 
-// Landmark labels at key positions
-const LANDMARKS: Record<number, string> = {
-  0: 'Garden Start',
-  7: 'Pine Grove',
-  14: 'Fern Gully',
-  21: 'Berry Patch',
-};
-
 // Generate winding S-curve path positions (percentages)
 function generatePathPositions(count: number): { x: number; y: number }[] {
   const positions: { x: number; y: number }[] = [];
@@ -53,7 +45,6 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
 
   return (
     <div className="relative rounded-3xl overflow-hidden border-2 border-border shadow-xl">
-      {/* Background image */}
       <div className="relative w-full" style={{ paddingBottom: '120%' }}>
         <img
           src={boardBg}
@@ -64,7 +55,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
         {/* Heavy fade so tiles pop */}
         <div className="absolute inset-0" style={{ background: 'rgba(255,252,245,0.55)' }} />
 
-        {/* Rain overlay */}
+        {/* Rain overlay — light grey */}
         {isRaining && (
           <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
             {Array.from({ length: 50 }).map((_, i) => (
@@ -74,8 +65,8 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                 style={{
                   left: `${Math.random() * 100}%`,
                   height: `${14 + Math.random() * 18}px`,
-                  background: '#8D6E63',
-                  opacity: 0.4,
+                  background: '#B0B0B0',
+                  opacity: 0.5,
                   animationDuration: `${0.5 + Math.random() * 0.5}s`,
                   animationDelay: `${Math.random() * 2}s`,
                 }}
@@ -105,29 +96,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
           })}
         </svg>
 
-        {/* Landmark labels */}
-        {Object.entries(LANDMARKS).map(([idx, label]) => {
-          const i = parseInt(idx);
-          if (i >= totalSpaces) return null;
-          const pos = pathPositions[i];
-          return (
-            <div
-              key={`lm-${i}`}
-              className="absolute z-15 pointer-events-none"
-              style={{
-                left: `${pos.x}%`,
-                top: `${pos.y - 5.5}%`,
-                transform: 'translateX(-50%)',
-              }}
-            >
-              <span className="text-[7px] sm:text-[9px] font-display font-bold whitespace-nowrap" style={{ color: '#5D4037' }}>
-                {label}
-              </span>
-            </div>
-          );
-        })}
-
-        {/* Tiles */}
+        {/* Tiles — exactly totalSpaces (days in month) */}
         {pathPositions.map((pos, i) => {
           const isCurrentPos = i === position;
           const isVisited = i < position;
@@ -152,7 +121,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                     : 'w-8 h-8 sm:w-10 sm:h-10'}
                 `}
                 style={{
-                  backgroundColor: isVisited ? '#C9B896' : color,
+                  backgroundColor: isCurrentPos ? 'transparent' : isVisited ? '#C9B896' : color,
                   border: isCurrentPos
                     ? '3px solid #F5A623'
                     : `2.5px solid ${isVisited ? '#A1887F' : '#795548'}`,
