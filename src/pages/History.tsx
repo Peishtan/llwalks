@@ -43,7 +43,7 @@ const History = () => {
     return types;
   };
 
-  const totalWalks = activities.filter(a => a.activity_type === 'walk').length;
+  
 
   if (!profile) return null;
 
@@ -57,21 +57,6 @@ const History = () => {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
-        {/* Monthly stats */}
-        <div className="flex gap-3">
-          <Card className="flex-1 border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-3 text-center">
-              <p className="text-2xl font-display font-bold" style={{ color: ICON_COLOR }}>{totalWalks}</p>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Walks</p>
-            </CardContent>
-          </Card>
-          <Card className="flex-1 border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-            <CardContent className="p-3 text-center">
-              <p className="text-2xl font-display font-bold" style={{ color: ICON_COLOR }}>{profile.path_position}</p>
-              <p className="text-xs" style={{ color: '#8D6E63' }}>Path Day</p>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Calendar */}
         <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>

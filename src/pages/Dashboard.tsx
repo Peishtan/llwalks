@@ -11,6 +11,7 @@ import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { startOfWeek, startOfMonth, startOfYear, isAfter, parseISO } from 'date-fns';
 
 const ICON_COLOR = '#5D4037';
 
@@ -26,7 +27,22 @@ const Dashboard = () => {
   const { profile } = useProfile();
   const queryClient = useQueryClient();
 
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+
+  const walkStats = useMemo(() => {
+    const walks = activities.filter(a => a.activity_type === 'walk');
+    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+    const monthStart = startOfMonth(now);
+    const yearStart = startOfYear(now);
+
+    return {
+      today: walks.filter(a => a.logged_at.startsWith(today)).length,
+      week: walks.filter(a => isAfter(parseISO(a.logged_at), weekStart)).length,
+      month: walks.filter(a => isAfter(parseISO(a.logged_at), monthStart)).length,
+      year: walks.filter(a => isAfter(parseISO(a.logged_at), yearStart)).length,
+    };
+  }, [activities, today]);
 
   const todayStats = useMemo(() => {
     const todayActs = activities.filter(a => a.logged_at.startsWith(today));
@@ -78,37 +94,49 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Today's stats */}
+        {/* Walk stats: today, week, month, year */}
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { label: 'Today', value: walkStats.today },
+            { label: 'Week', value: walkStats.week },
+            { label: 'Month', value: walkStats.month },
+            { label: 'Year', value: walkStats.year },
+          ].map((stat, i) => (
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
+              <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+                <CardContent className="p-3 text-center flex flex-col items-center">
+                  <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />
+                  <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{stat.value}</p>
+                  <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>{stat.label}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Today's activity breakdown */}
         <div className="grid grid-cols-3 gap-3">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center flex flex-col items-center">
-                <PawPrint className="w-7 h-7" style={{ color: ICON_COLOR }} />
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.walks}</p>
-                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Walks</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center flex flex-col items-center">
-                <Droplets className="w-7 h-7" style={{ color: ICON_COLOR }} />
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.pees}</p>
-                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Pees</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center flex flex-col items-center">
-                <PoopIcon className="w-7 h-7" style={{ color: ICON_COLOR }} />
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
-                <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Poops</p>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+            <CardContent className="p-3 text-center flex flex-col items-center">
+              <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />
+              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.walks}</p>
+              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Walks</p>
+            </CardContent>
+          </Card>
+          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+            <CardContent className="p-3 text-center flex flex-col items-center">
+              <Droplets className="w-5 h-5" style={{ color: ICON_COLOR }} />
+              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.pees}</p>
+              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Pees</p>
+            </CardContent>
+          </Card>
+          <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
+            <CardContent className="p-3 text-center flex flex-col items-center">
+              <PoopIcon className="w-5 h-5" style={{ color: ICON_COLOR }} />
+              <p className="text-xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
+              <p className="text-[10px] font-display" style={{ color: '#8D6E63' }}>Poops</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Today's log with delete */}
