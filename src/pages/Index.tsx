@@ -15,11 +15,30 @@ import { Sun, CloudRain, Droplets, PawPrint } from 'lucide-react';
 const Index = () => {
   const { signOut } = useAuth();
   const { profile, isLoading } = useProfile();
-  const { logActivity } = useActivities();
+  const { activities, logActivity } = useActivities();
   const [weather, setWeather] = useState<'sun' | 'rain'>('sun');
   const [showLogDialog, setShowLogDialog] = useState(false);
 
   const totalSpaces = getDaysInMonth(new Date());
+  const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+
+  // Compute which days of the month had walks
+  const walkDays = useMemo(() => {
+    const days = new Set<number>();
+    activities.forEach(a => {
+      if (a.activity_type === 'walk' && a.logged_at.startsWith(currentMonth)) {
+        const day = new Date(a.logged_at).getDate();
+        days.add(day);
+      }
+    });
+    return days;
+  }, [activities, currentMonth]);
+
+  const latestWalkDay = useMemo(() => {
+    let max = 0;
+    walkDays.forEach(d => { if (d > max) max = d; });
+    return max;
+  }, [walkDays]);
 
   if (isLoading || !profile) {
     return (
