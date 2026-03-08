@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { getDaysInMonth } from 'date-fns';
-import llAvatar from '@/assets/ll-avatar.png';
+import llAvatar from '@/assets/ll-avatar-transparent.png';
 import boardBg from '@/assets/board-background.jpg';
 
 interface PawPathProps {
