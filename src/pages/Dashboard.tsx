@@ -5,11 +5,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Sun, CloudRain } from 'lucide-react';
+import { Trash2, Sun, CloudRain, PawPrint, Droplets, LayoutDashboard } from 'lucide-react';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+
+const ICON_COLOR = '#5D4037';
+
+const ActivityIcon = ({ type }: { type: string }) => {
+  if (type === 'walk') return <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />;
+  if (type === 'pee') return <Droplets className="w-5 h-5" style={{ color: ICON_COLOR }} />;
+  return <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>;
+};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -47,8 +55,9 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-3">
-          <h1 className="text-xl font-display font-bold" style={{ color: '#5D4037' }}>📊 LL's Dashboard</h1>
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
+          <LayoutDashboard className="w-5 h-5" style={{ color: ICON_COLOR }} />
+          <h1 className="text-xl font-display font-bold" style={{ color: ICON_COLOR }}>LL's Dashboard</h1>
         </div>
       </div>
 
@@ -59,7 +68,7 @@ const Dashboard = () => {
             <CardContent className="p-5 flex items-center gap-4">
               <img src={llAvatar} alt="LL" className="w-16 h-16 rounded-full object-contain" />
               <div>
-                <h2 className="font-display font-bold text-lg" style={{ color: '#5D4037' }}>LL's Day</h2>
+                <h2 className="font-display font-bold text-lg" style={{ color: ICON_COLOR }}>LL's Day</h2>
                 <p className="text-sm" style={{ color: '#8D6E63' }}>
                   {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                 </p>
@@ -72,9 +81,9 @@ const Dashboard = () => {
         <div className="grid grid-cols-3 gap-3">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center">
-                <span className="text-3xl">🐾</span>
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: '#5D4037' }}>{todayStats.walks}</p>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <PawPrint className="w-7 h-7" style={{ color: ICON_COLOR }} />
+                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.walks}</p>
                 <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Walks</p>
               </CardContent>
             </Card>
@@ -82,9 +91,9 @@ const Dashboard = () => {
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center">
-                <span className="text-3xl">💧</span>
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: '#5D4037' }}>{todayStats.pees}</p>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <Droplets className="w-7 h-7" style={{ color: ICON_COLOR }} />
+                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.pees}</p>
                 <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Pees</p>
               </CardContent>
             </Card>
@@ -92,9 +101,9 @@ const Dashboard = () => {
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
-              <CardContent className="p-4 text-center">
-                <span className="text-3xl">🍫</span>
-                <p className="text-2xl font-display font-bold mt-1" style={{ color: '#5D4037' }}>{todayStats.poops}</p>
+              <CardContent className="p-4 text-center flex flex-col items-center">
+                <span className="text-2xl" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
+                <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
                 <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Poops</p>
               </CardContent>
             </Card>
@@ -103,11 +112,11 @@ const Dashboard = () => {
 
         {/* Today's log with delete */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <h3 className="font-display font-bold mb-2" style={{ color: '#5D4037' }}>Today's Log</h3>
+          <h3 className="font-display font-bold mb-2" style={{ color: ICON_COLOR }}>Today's Log</h3>
           {todayActivities.length === 0 ? (
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
               <CardContent className="p-4 text-center text-sm" style={{ color: '#8D6E63' }}>
-                No activities yet today. Go log a walk! 🐾
+                No activities yet today. Go log a walk!
               </CardContent>
             </Card>
           ) : (
@@ -122,18 +131,16 @@ const Dashboard = () => {
                   >
                     <Card className="border" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
                       <CardContent className="p-3 flex items-center gap-3">
-                        <span className="text-xl">
-                          {a.activity_type === 'walk' ? '🐾' : a.activity_type === 'pee' ? '💧' : '🍫'}
-                        </span>
+                        <ActivityIcon type={a.activity_type} />
                         <div className="flex-1">
-                          <span className="font-display font-semibold capitalize text-sm" style={{ color: '#5D4037' }}>
+                          <span className="font-display font-semibold capitalize text-sm" style={{ color: ICON_COLOR }}>
                             {a.activity_type}
                           </span>
                           <span className="ml-2">
                             {a.weather === 'rain' ? (
                               <CloudRain className="w-3.5 h-3.5 inline" style={{ color: '#795548' }} />
                             ) : (
-                              <Sun className="w-3.5 h-3.5 inline" style={{ color: '#D4943A' }} />
+                              <Sun className="w-3.5 h-3.5 inline" style={{ color: '#8D6E63' }} />
                             )}
                           </span>
                         </div>

@@ -47,8 +47,8 @@ const Index = () => {
   if (isLoading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }} className="text-4xl">
-          🐾
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
+          <PawPrint className="w-10 h-10" style={{ color: '#5D4037' }} />
         </motion.div>
       </div>
     );
@@ -190,7 +190,7 @@ const Index = () => {
                     className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
                     style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
                   >
-                    <span className="text-lg">🍫</span>
+                    <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
                     <span className="text-xs">Poop</span>
                   </Button>
                 </motion.div>
