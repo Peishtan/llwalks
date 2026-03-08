@@ -73,7 +73,7 @@ export const useActivities = () => {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['activities', user?.id] });
-      toast.success('🐾 Walk logged!');
+      toast.success('Walk logged!');
     },
     onError: (err: Error) => toast.error(err.message),
   });
