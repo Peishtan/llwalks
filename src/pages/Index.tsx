@@ -76,7 +76,7 @@ const Index = () => {
                 {profile.dog_name}'s Path
               </h1>
               <p className="text-xs font-body" style={{ color: '#8D6E63' }}>
-                Day {latestWalkDay} of {totalSpaces}
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </p>
             </div>
           </div>

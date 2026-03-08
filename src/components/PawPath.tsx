@@ -177,12 +177,9 @@ const PawPath = ({ walkDays, isRaining }: PawPathProps) => {
       </div>
 
       {/* Bottom bar */}
-      <div className="relative border-t border-border px-4 py-2 flex justify-between items-center" style={{ background: '#F5F0E8' }}>
-        <span className="text-xs font-display" style={{ color: '#8D6E63' }}>
-          {now.toLocaleString('default', { month: 'long', year: 'numeric' })}
-        </span>
+      <div className="relative border-t border-border px-4 py-2 flex justify-center items-center" style={{ background: '#F5F0E8' }}>
         <span className="text-xs font-display font-bold" style={{ color: '#5D4037' }}>
-          Day {position >= 0 ? position + 1 : 0} / {totalSpaces}
+          {now.toLocaleString('default', { month: 'long', year: 'numeric' })}
         </span>
       </div>
     </div>
