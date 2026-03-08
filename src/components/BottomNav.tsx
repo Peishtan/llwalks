@@ -7,19 +7,19 @@ const BottomNav = () => {
     }`;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t-2 border-border z-50">
-      <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-4">
+    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border z-50">
+      <div className="flex justify-around items-center h-14 max-w-lg mx-auto px-4">
         <NavLink to="/" className={linkClass}>
-          <span className="text-xl">🐾</span>
-          <span>Path</span>
+          <span className="text-base">🐾</span>
+          <span className="text-[10px]">Path</span>
         </NavLink>
         <NavLink to="/shop" className={linkClass}>
-          <span className="text-xl">🎁</span>
-          <span>Shop</span>
+          <span className="text-base">🦴</span>
+          <span className="text-[10px]">Shop</span>
         </NavLink>
         <NavLink to="/history" className={linkClass}>
-          <span className="text-xl">📅</span>
-          <span>History</span>
+          <span className="text-base">📋</span>
+          <span className="text-[10px]">History</span>
         </NavLink>
       </div>
     </nav>
