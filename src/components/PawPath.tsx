@@ -184,7 +184,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                   ${isVisited ? 'opacity-90' : !isCurrentPos ? 'opacity-70' : ''}
                 `}
                 style={{
-                  backgroundColor: isVisited ? '#66BB6A' : color,
+                  backgroundColor: isVisited ? '#A8D5A2' : color,
                   boxShadow: isCurrentPos
                     ? '0 0 16px rgba(255,200,0,0.6), 0 4px 8px rgba(0,0,0,0.3)'
                     : '0 2px 4px rgba(0,0,0,0.25)',
