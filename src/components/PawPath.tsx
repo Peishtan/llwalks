@@ -164,8 +164,8 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
               >
                 {isCurrentPos ? (
                   <motion.img
-                    key={`poodle-${position}`}
-                    src={poodleAvatar}
+                    key={`ll-${position}`}
+                    src={llAvatar}
                     alt="LL"
                     className="w-9 h-9 sm:w-12 sm:h-12 object-contain drop-shadow-lg"
                     animate={{ y: [0, -6, 0] }}

@@ -13,9 +13,9 @@ const BottomNav = () => {
           <span className="text-base">🐾</span>
           <span className="text-[10px]">Path</span>
         </NavLink>
-        <NavLink to="/shop" className={linkClass}>
-          <span className="text-base">🦴</span>
-          <span className="text-[10px]">Shop</span>
+        <NavLink to="/dashboard" className={linkClass}>
+          <span className="text-base">📊</span>
+          <span className="text-[10px]">Dashboard</span>
         </NavLink>
         <NavLink to="/history" className={linkClass}>
           <span className="text-base">📋</span>
