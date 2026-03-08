@@ -57,13 +57,18 @@ const Index = () => {
     );
   }
 
-  const handleLog = (type: 'walk' | 'pee' | 'poop') => {
-    logActivity.mutate({ type, weather, date: logDate });
-    if (type === 'walk') setShowLogDialog(false);
+  const handleSubmitLog = () => {
+    logActivity.mutate({ type: 'walk', weather, date: logDate });
+    if (didPee) logActivity.mutate({ type: 'pee', weather, date: logDate });
+    if (didPoop) logActivity.mutate({ type: 'poop', weather, date: logDate });
+    setShowLogDialog(false);
   };
 
   const openLogDialog = () => {
     setLogDate(new Date());
+    setWeather('sun');
+    setDidPee(false);
+    setDidPoop(false);
     setShowLogDialog(true);
   };
 
