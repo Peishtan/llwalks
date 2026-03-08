@@ -125,13 +125,35 @@ const Index = () => {
             <DialogTitle className="font-display font-bold text-xl text-center" style={{ color: '#5D4037' }}>
               Log a Walk
             </DialogTitle>
-            <p className="text-sm text-center" style={{ color: '#8D6E63' }}>
-              {format(new Date(), 'EEEE, MMM d, yyyy')}
-            </p>
           </DialogHeader>
 
           <div className="space-y-5 pt-2">
-            {/* Log walk */}
+            {/* Date picker */}
+            <div>
+              <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Date</p>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-display rounded-2xl h-12"
+                    style={{ borderColor: '#A1887F', background: '#FFF8F0', color: '#5D4037' }}
+                  >
+                    <CalendarIcon className="w-4 h-4 mr-2" style={{ color: '#8D6E63' }} />
+                    {format(logDate, 'EEEE, MMM d, yyyy')}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={logDate}
+                    onSelect={(d) => d && setLogDate(d)}
+                    disabled={(d) => d > new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
             <motion.div whileTap={{ scale: 0.97 }}>
               <Button
                 onClick={() => handleLog('walk')}
