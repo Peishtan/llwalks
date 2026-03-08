@@ -14,7 +14,7 @@ const ActivityIcon = ({ type, size = 'sm' }: { type: string; size?: 'sm' | 'lg' 
   const cls = size === 'lg' ? 'w-5 h-5' : 'w-4 h-4';
   if (type === 'walk') return <PawPrint className={cls} style={{ color: ICON_COLOR }} />;
   if (type === 'pee') return <Droplets className={cls} style={{ color: ICON_COLOR }} />;
-  return <span className={size === 'lg' ? 'text-lg' : 'text-sm'} style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>;
+  return <PoopIcon className={cls} style={{ color: ICON_COLOR }} />;
 };
 
 const History = () => {
