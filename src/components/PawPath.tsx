@@ -115,7 +115,7 @@ const PawPath = ({ position, isRaining }: PawPathProps) => {
                 y1={prev.y}
                 x2={pos.x}
                 y2={pos.y}
-                stroke={isVisitedSegment ? '#4CAF50' : '#8D6E63'}
+                stroke={isVisitedSegment ? '#8D6E63' : '#A1887F'}
                 strokeWidth="1.2"
                 strokeDasharray={isVisitedSegment ? 'none' : '2,1'}
                 opacity={isVisitedSegment ? 0.8 : 0.4}
