@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Sun, CloudRain, PawPrint, Droplets, LayoutDashboard } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
