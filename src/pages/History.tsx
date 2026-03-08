@@ -6,6 +6,7 @@ import BottomNav from '@/components/BottomNav';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, PawPrint, Droplets, CalendarDays } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 
 const ICON_COLOR = '#5D4037';
 
@@ -13,7 +14,7 @@ const ActivityIcon = ({ type, size = 'sm' }: { type: string; size?: 'sm' | 'lg' 
   const cls = size === 'lg' ? 'w-5 h-5' : 'w-4 h-4';
   if (type === 'walk') return <PawPrint className={cls} style={{ color: ICON_COLOR }} />;
   if (type === 'pee') return <Droplets className={cls} style={{ color: ICON_COLOR }} />;
-  return <span className={size === 'lg' ? 'text-lg' : 'text-sm'} style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>;
+  return <PoopIcon className={cls} style={{ color: ICON_COLOR }} />;
 };
 
 const History = () => {
@@ -130,9 +131,9 @@ const History = () => {
                           <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>{a.activity_type}</span>
                           <span className="ml-2">
                             {a.weather === 'rain' ? (
-                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: '#795548' }} />
+                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             ) : (
-                              <Sun className="w-3.5 h-3.5 inline" style={{ color: '#8D6E63' }} />
+                              <Sun className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             )}
                           </span>
                         </div>

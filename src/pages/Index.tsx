@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, Droplets, PawPrint, CalendarIcon } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 import { cn } from '@/lib/utils';
 
 const Index = () => {
@@ -190,7 +191,7 @@ const Index = () => {
                     className="w-full h-14 rounded-2xl font-display font-bold flex flex-col gap-0.5"
                     style={{ borderColor: '#A1887F', background: '#F5E6D0', color: '#5D4037' }}
                   >
-                    <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
+                    <PoopIcon className="w-5 h-5" style={{ color: '#5D4037' }} />
                     <span className="text-xs">Poop</span>
                   </Button>
                 </motion.div>
@@ -212,7 +213,7 @@ const Index = () => {
                     ...(weather === 'sun' ? { ringColor: '#D4943A' } : {}),
                   }}
                 >
-                  <Sun className="w-5 h-5 mr-1" style={{ color: '#D4943A' }} />
+                  <Sun className="w-5 h-5 mr-1" style={{ color: '#5D4037' }} />
                   Sunny
                 </Button>
                 <Button

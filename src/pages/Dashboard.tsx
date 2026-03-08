@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Sun, CloudRain, PawPrint, Droplets, LayoutDashboard } from 'lucide-react';
+import PoopIcon from '@/components/PoopIcon';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -16,7 +17,7 @@ const ICON_COLOR = '#5D4037';
 const ActivityIcon = ({ type }: { type: string }) => {
   if (type === 'walk') return <PawPrint className="w-5 h-5" style={{ color: ICON_COLOR }} />;
   if (type === 'pee') return <Droplets className="w-5 h-5" style={{ color: ICON_COLOR }} />;
-  return <span className="text-lg" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>;
+  return <PoopIcon className="w-5 h-5" style={{ color: ICON_COLOR }} />;
 };
 
 const Dashboard = () => {
@@ -102,7 +103,7 @@ const Dashboard = () => {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
               <CardContent className="p-4 text-center flex flex-col items-center">
-                <span className="text-2xl" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
+                <PoopIcon className="w-7 h-7" style={{ color: ICON_COLOR }} />
                 <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
                 <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Poops</p>
               </CardContent>
@@ -138,9 +139,9 @@ const Dashboard = () => {
                           </span>
                           <span className="ml-2">
                             {a.weather === 'rain' ? (
-                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: '#795548' }} />
+                              <CloudRain className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             ) : (
-                              <Sun className="w-3.5 h-3.5 inline" style={{ color: '#8D6E63' }} />
+                              <Sun className="w-3.5 h-3.5 inline" style={{ color: ICON_COLOR }} />
                             )}
                           </span>
                         </div>
