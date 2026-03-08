@@ -103,7 +103,7 @@ const Dashboard = () => {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
               <CardContent className="p-4 text-center flex flex-col items-center">
-                <span className="text-2xl" style={{ filter: 'grayscale(1) brightness(0.4)' }}>💩</span>
+                <PoopIcon className="w-7 h-7" style={{ color: ICON_COLOR }} />
                 <p className="text-2xl font-display font-bold mt-1" style={{ color: ICON_COLOR }}>{todayStats.poops}</p>
                 <p className="text-xs font-display" style={{ color: '#8D6E63' }}>Poops</p>
               </CardContent>
