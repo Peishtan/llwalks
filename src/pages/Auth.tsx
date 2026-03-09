@@ -87,7 +87,7 @@ const Auth = () => {
                 disabled={loading}
                 className="w-full h-12 rounded-xl text-lg font-display font-semibold"
               >
-                {loading ? '...' : isSignUp ? 'Sign Up 🐾' : 'Log In 🐾'}
+                {loading ? '...' : isSignUp ? <span className="flex items-center gap-1">Sign Up <PawPrint className="w-5 h-5" style={{ color: '#5D4037' }} /></span> : <span className="flex items-center gap-1">Log In <PawPrint className="w-5 h-5" style={{ color: '#5D4037' }} /></span>}
               </Button>
             </form>
             <button
