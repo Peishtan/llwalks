@@ -111,18 +111,6 @@ const History = () => {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
-        {/* Log a Walk button */}
-        <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
-          <Button
-            onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
-            className="w-full h-14 rounded-2xl text-lg font-display font-bold shadow-lg"
-            style={{ background: '#8D6E63', color: '#FFF8F0' }}
-          >
-            <PawPrint className="w-5 h-5 mr-2" />
-            {user ? 'Log a Walk' : 'Login to Log'}
-          </Button>
-        </motion.div>
-
         {/* Calendar */}
         <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
           <CardContent className="p-4">
@@ -174,6 +162,18 @@ const History = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Log a Walk button */}
+        <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
+          <Button
+            onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
+            className="w-full h-14 rounded-2xl text-lg font-display font-bold shadow-lg"
+            style={{ background: '#8D6E63', color: '#FFF8F0' }}
+          >
+            <PawPrint className="w-5 h-5 mr-2" />
+            {user ? 'Log a Walk' : 'Login to Log'}
+          </Button>
+        </motion.div>
 
         {/* Day detail */}
         {selectedDate && (
