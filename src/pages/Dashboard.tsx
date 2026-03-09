@@ -25,7 +25,10 @@ const Dashboard = () => {
   const queryClient = useQueryClient();
 
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const today = `${year}-${month}-${day}`;
 
   // All-time stats
   const allTimeStats = useMemo(() => {
