@@ -77,26 +77,32 @@ const Dashboard = () => {
             <Card className="border-2" style={{ borderColor: '#D7C4A5', background: '#FFF8F0' }}>
               <CardContent className="p-4">
                 <h3 className="font-display font-bold text-center mb-2" style={{ color: ICON_COLOR }}>Walk Weather</h3>
-                <div className="h-48">
+                <div className="h-44">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={weatherData}
                         cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={70}
-                        paddingAngle={2}
+                        cy="45%"
+                        innerRadius={35}
+                        outerRadius={55}
+                        paddingAngle={3}
                         dataKey="value"
-                        label={({ name, value }) => `${name}: ${value}`}
-                        labelLine={false}
                       >
                         {weatherData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
                       <Legend
-                        formatter={(value) => <span style={{ color: ICON_COLOR, fontFamily: 'var(--font-display)' }}>{value}</span>}
+                        verticalAlign="bottom"
+                        formatter={(value, entry: any) => {
+                          const item = weatherData.find(d => d.name === value);
+                          return (
+                            <span style={{ color: ICON_COLOR, fontFamily: 'var(--font-display)', fontSize: '12px' }}>
+                              {value}: {item?.value || 0}
+                            </span>
+                          );
+                        }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
