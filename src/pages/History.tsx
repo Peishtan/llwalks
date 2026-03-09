@@ -189,46 +189,55 @@ const History = () => {
                 ) : (
                   <div className="space-y-2">
                     {consolidatedActivities.map(item => (
-                      <div key={item.type} className="flex items-center gap-3 text-sm rounded-xl p-2" style={{ background: '#F5E6D0' }}>
-                        <ActivityIcon type={item.type} />
-                        <div className="flex-1">
-                          <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>
-                            {item.type}
-                            {item.count > 1 && (
-                              <span className="ml-1 font-normal" style={{ color: '#8D6E63' }}>×{item.count}</span>
-                            )}
+                      <div key={item.type} className="rounded-xl p-2" style={{ background: '#F5E6D0' }}>
+                        <div className="flex items-center gap-3 text-sm">
+                          <ActivityIcon type={item.type} />
+                          <div className="flex-1">
+                            <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>
+                              {item.type}
+                              {item.count > 1 && (
+                                <span className="ml-1 font-normal" style={{ color: '#8D6E63' }}>×{item.count}</span>
+                              )}
+                            </span>
+                          </div>
+                          <span className="flex gap-1 mr-1">
+                            {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
+                            {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                           </span>
-                        </div>
-                        <span className="flex gap-1 mr-1">
-                          {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
-                          {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
-                        </span>
-                        {user && (
-                          item.count > 1 ? (
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleDeleteOne(item.ids)}
-                                className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                                title="Remove one"
-                              >
-                                <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
-                              </button>
+                          {user && (
+                            item.count > 1 ? (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleDeleteOne(item.ids)}
+                                  className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                  title="Remove one"
+                                >
+                                  <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteType(item.ids)}
+                                  className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                  title="Delete all"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                                </button>
+                              </div>
+                            ) : (
                               <button
                                 onClick={() => handleDeleteType(item.ids)}
                                 className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                                title="Delete all"
                               >
                                 <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
                               </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => handleDeleteType(item.ids)}
-                              className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
-                            </button>
-                          )
+                            )
+                          )}
+                        </div>
+                        {item.notes.length > 0 && (
+                          <div className="mt-2 pl-8 text-xs" style={{ color: '#8D6E63' }}>
+                            {item.notes.map((note, i) => (
+                              <p key={i} className="italic">"{note}"</p>
+                            ))}
+                          </div>
                         )}
                       </div>
                     ))}
