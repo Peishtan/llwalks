@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { PawPrint } from 'lucide-react';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
 import { toast } from 'sonner';
 
@@ -86,7 +87,7 @@ const Auth = () => {
                 disabled={loading}
                 className="w-full h-12 rounded-xl text-lg font-display font-semibold"
               >
-                {loading ? '...' : isSignUp ? 'Sign Up 🐾' : 'Log In 🐾'}
+                {loading ? '...' : isSignUp ? <span className="flex items-center gap-1">Sign Up <PawPrint className="w-5 h-5" style={{ color: '#5D4037' }} /></span> : <span className="flex items-center gap-1">Log In <PawPrint className="w-5 h-5" style={{ color: '#5D4037' }} /></span>}
               </Button>
             </form>
             <button
