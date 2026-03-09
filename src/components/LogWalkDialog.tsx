@@ -142,6 +142,19 @@ const LogWalkDialog = ({ open, onOpenChange, onSubmit, isPending }: LogWalkDialo
             </div>
           </div>
 
+          {/* Notes */}
+          <div>
+            <p className="text-xs font-display font-bold mb-2" style={{ color: '#8D6E63' }}>Notes (optional)</p>
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="How was the walk? Any highlights?"
+              className="rounded-xl resize-none"
+              style={{ borderColor: '#A1887F', background: '#FFF8F0', color: '#5D4037' }}
+              rows={2}
+            />
+          </div>
+
           {/* Submit button */}
           <motion.div whileTap={{ scale: 0.97 }}>
             <Button
