@@ -34,6 +34,7 @@ const LogWalkDialog = ({ open, onOpenChange, onSubmit, isPending }: LogWalkDialo
       setWeather('sun');
       setDidPee(false);
       setDidPoop(false);
+      setNotes('');
     }
     onOpenChange(newOpen);
   };
