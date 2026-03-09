@@ -41,8 +41,8 @@ const Auth = () => {
           >
             🐕
           </motion.div>
-          <h1 className="text-4xl font-display font-bold text-foreground">Paw Path</h1>
-          <p className="text-muted-foreground mt-2 font-body">Track your pup's daily adventures!</p>
+          <h1 className="text-4xl font-display font-bold text-foreground">LL Walks</h1>
+          <p className="text-muted-foreground mt-2 font-body">Track LL's daily walks</p>
         </div>
 
         <Card className="shadow-lg border-2 border-border">
