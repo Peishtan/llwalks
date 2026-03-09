@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, Droplets, PawPrint, CalendarIcon } from 'lucide-react';
@@ -12,7 +13,7 @@ import { cn } from '@/lib/utils';
 interface LogWalkDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean }) => void;
+  onSubmit: (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean; notes?: string }) => void;
   isPending?: boolean;
 }
 
@@ -21,9 +22,10 @@ const LogWalkDialog = ({ open, onOpenChange, onSubmit, isPending }: LogWalkDialo
   const [logDate, setLogDate] = useState<Date>(new Date());
   const [didPee, setDidPee] = useState(false);
   const [didPoop, setDidPoop] = useState(false);
+  const [notes, setNotes] = useState('');
 
   const handleSubmit = () => {
-    onSubmit({ weather, date: logDate, didPee, didPoop });
+    onSubmit({ weather, date: logDate, didPee, didPoop, notes: notes.trim() || undefined });
   };
 
   const handleOpenChange = (newOpen: boolean) => {
