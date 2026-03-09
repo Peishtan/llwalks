@@ -49,8 +49,8 @@ const Index = () => {
     );
   }
 
-  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean }) => {
-    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date });
+  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean; notes?: string }) => {
+    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date, notes: data.notes });
     if (data.didPee) logActivity.mutate({ type: 'pee', weather: data.weather, date: data.date });
     if (data.didPoop) logActivity.mutate({ type: 'poop', weather: data.weather, date: data.date });
     setShowLogDialog(false);
