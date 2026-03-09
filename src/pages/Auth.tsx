@@ -38,9 +38,9 @@ const Auth = () => {
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="text-7xl mb-4"
+            className="mb-4"
           >
-            🐕
+            <img src={llAvatar} alt="LL" className="w-24 h-24 mx-auto" />
           </motion.div>
           <h1 className="text-4xl font-display font-bold text-foreground">LL Walks</h1>
           <p className="text-muted-foreground mt-2 font-body">Track LL's daily walks</p>
