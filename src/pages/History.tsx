@@ -47,15 +47,18 @@ const History = () => {
   }, [selectedDate, activities]);
 
   const consolidatedActivities = useMemo(() => {
-    const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[] }> = {};
+    const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[]; notes: string[] }> = {};
     dayActivities.forEach(a => {
       if (!grouped[a.activity_type]) {
-        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [], ids: [] };
+        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [], ids: [], notes: [] };
       }
       grouped[a.activity_type].count += 1;
       grouped[a.activity_type].ids.push(a.id);
       if (!grouped[a.activity_type].weather.includes(a.weather)) {
         grouped[a.activity_type].weather.push(a.weather);
+      }
+      if (a.notes) {
+        grouped[a.activity_type].notes.push(a.notes);
       }
     });
     return Object.values(grouped).sort(
