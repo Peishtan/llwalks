@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           id: string
           logged_at: string
+          notes: string | null
           treats_earned: number
           user_id: string
           weather: string
@@ -31,6 +32,7 @@ export type Database = {
           created_at?: string
           id?: string
           logged_at?: string
+          notes?: string | null
           treats_earned?: number
           user_id: string
           weather?: string
@@ -41,6 +43,7 @@ export type Database = {
           created_at?: string
           id?: string
           logged_at?: string
+          notes?: string | null
           treats_earned?: number
           user_id?: string
           weather?: string

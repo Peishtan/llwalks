@@ -47,15 +47,18 @@ const History = () => {
   }, [selectedDate, activities]);
 
   const consolidatedActivities = useMemo(() => {
-    const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[] }> = {};
+    const grouped: Record<string, { type: string; count: number; weather: string[]; ids: string[]; notes: string[] }> = {};
     dayActivities.forEach(a => {
       if (!grouped[a.activity_type]) {
-        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [], ids: [] };
+        grouped[a.activity_type] = { type: a.activity_type, count: 0, weather: [], ids: [], notes: [] };
       }
       grouped[a.activity_type].count += 1;
       grouped[a.activity_type].ids.push(a.id);
       if (!grouped[a.activity_type].weather.includes(a.weather)) {
         grouped[a.activity_type].weather.push(a.weather);
+      }
+      if (a.notes) {
+        grouped[a.activity_type].notes.push(a.notes);
       }
     });
     return Object.values(grouped).sort(
@@ -92,8 +95,8 @@ const History = () => {
     }
   };
 
-  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean }) => {
-    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date });
+  const handleSubmitLog = (data: { weather: 'sun' | 'rain'; date: Date; didPee: boolean; didPoop: boolean; notes?: string }) => {
+    logActivity.mutate({ type: 'walk', weather: data.weather, date: data.date, notes: data.notes });
     if (data.didPee) logActivity.mutate({ type: 'pee', weather: data.weather, date: data.date });
     if (data.didPoop) logActivity.mutate({ type: 'poop', weather: data.weather, date: data.date });
     setShowLogDialog(false);
@@ -186,46 +189,55 @@ const History = () => {
                 ) : (
                   <div className="space-y-2">
                     {consolidatedActivities.map(item => (
-                      <div key={item.type} className="flex items-center gap-3 text-sm rounded-xl p-2" style={{ background: '#F5E6D0' }}>
-                        <ActivityIcon type={item.type} />
-                        <div className="flex-1">
-                          <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>
-                            {item.type}
-                            {item.count > 1 && (
-                              <span className="ml-1 font-normal" style={{ color: '#8D6E63' }}>×{item.count}</span>
-                            )}
+                      <div key={item.type} className="rounded-xl p-2" style={{ background: '#F5E6D0' }}>
+                        <div className="flex items-center gap-3 text-sm">
+                          <ActivityIcon type={item.type} />
+                          <div className="flex-1">
+                            <span className="font-semibold capitalize" style={{ color: ICON_COLOR }}>
+                              {item.type}
+                              {item.count > 1 && (
+                                <span className="ml-1 font-normal" style={{ color: '#8D6E63' }}>×{item.count}</span>
+                              )}
+                            </span>
+                          </div>
+                          <span className="flex gap-1 mr-1">
+                            {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
+                            {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
                           </span>
-                        </div>
-                        <span className="flex gap-1 mr-1">
-                          {item.weather.includes('sun') && <Sun className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
-                          {item.weather.includes('rain') && <CloudRain className="w-3.5 h-3.5" style={{ color: ICON_COLOR }} />}
-                        </span>
-                        {user && (
-                          item.count > 1 ? (
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleDeleteOne(item.ids)}
-                                className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                                title="Remove one"
-                              >
-                                <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
-                              </button>
+                          {user && (
+                            item.count > 1 ? (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleDeleteOne(item.ids)}
+                                  className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                  title="Remove one"
+                                >
+                                  <span className="text-[10px] font-bold" style={{ color: '#A1887F' }}>−1</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteType(item.ids)}
+                                  className="p-1 rounded-lg hover:bg-red-50 transition-colors"
+                                  title="Delete all"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
+                                </button>
+                              </div>
+                            ) : (
                               <button
                                 onClick={() => handleDeleteType(item.ids)}
                                 className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                                title="Delete all"
                               >
                                 <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
                               </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => handleDeleteType(item.ids)}
-                              className="p-1 rounded-lg hover:bg-red-50 transition-colors"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" style={{ color: '#A1887F' }} />
-                            </button>
-                          )
+                            )
+                          )}
+                        </div>
+                        {item.notes.length > 0 && (
+                          <div className="mt-2 pl-8 text-xs" style={{ color: '#8D6E63' }}>
+                            {item.notes.map((note, i) => (
+                              <p key={i} className="italic">"{note}"</p>
+                            ))}
+                          </div>
                         )}
                       </div>
                     ))}
