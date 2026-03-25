@@ -30,7 +30,7 @@ const History = () => {
   const { profile } = useProfile();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMonth, setViewMonth] = useState(new Date());
   const [showLogDialog, setShowLogDialog] = useState(false);
   const now = new Date();
