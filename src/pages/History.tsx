@@ -33,7 +33,7 @@ const History = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMonth, setViewMonth] = useState(new Date());
   const [showLogDialog, setShowLogDialog] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
+  
   const now = new Date();
 
   const calendarDays = useMemo(() => {
