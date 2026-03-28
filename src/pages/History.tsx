@@ -33,7 +33,7 @@ const History = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMonth, setViewMonth] = useState(new Date());
   const [showLogDialog, setShowLogDialog] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
+  
   const now = new Date();
 
   const calendarDays = useMemo(() => {
@@ -280,14 +280,8 @@ const History = () => {
           </motion.div>
         )}
 
-        {/* Weather Insights toggle */}
-        <button
-          onClick={() => setShowInsights(!showInsights)}
-          className="w-full text-center text-sm font-display font-semibold text-muted-foreground py-2"
-        >
-          {showInsights ? 'Hide Insights ▲' : 'Show Insights ▼'}
-        </button>
-        {showInsights && <WeatherInsights activities={activities} />}
+        {/* Weather Insights */}
+        <WeatherInsights activities={activities} />
       </div>
 
       <LogWalkDialog
