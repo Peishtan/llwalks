@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sun, CloudRain, Flame } from 'lucide-react';
+import { Sun, CloudRain, Flame, PawPrint } from 'lucide-react';
 import PoopIcon from '@/components/PoopIcon';
 import { motion } from 'framer-motion';
 
@@ -59,7 +59,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
             <Flame className="w-6 h-6 text-accent" />
             <div>
               <p className="font-display font-bold text-foreground text-lg leading-tight">{insights.streak}-day streak!</p>
-              <p className="text-xs text-muted-foreground font-display">Keep it going 🐾</p>
+              <p className="text-xs text-muted-foreground font-display">Keep it going <PawPrint className="w-3 h-3 inline text-foreground" /></p>
             </div>
           </CardContent>
         </Card>
@@ -116,7 +116,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
             </div>
             {insights.rainPoopRate < insights.sunPoopRate && insights.rainWalks > 2 && (
               <p className="text-xs text-muted-foreground font-display italic text-center">
-                LL poops {insights.sunPoopRate - insights.rainPoopRate}% less when it rains! 🌧️
+                LL poops {insights.sunPoopRate - insights.rainPoopRate}% less when it rains! <CloudRain className="w-3 h-3 inline text-muted-foreground" />
               </p>
             )}
           </CardContent>
