@@ -56,7 +56,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
       {insights.streak > 0 && (
         <Card className="border-2 border-border bg-card">
           <CardContent className="p-3 flex items-center gap-3">
-            <Flame className="w-6 h-6 text-accent" />
+            <Flame className="w-6 h-6 text-foreground" />
             <div>
               <p className="font-display font-bold text-foreground text-lg leading-tight">{insights.streak}-day streak!</p>
               <p className="text-xs text-muted-foreground font-display">Keep it going <PawPrint className="w-3 h-3 inline text-foreground" /></p>
@@ -104,7 +104,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl p-3 bg-muted text-center">
-                <Sun className="w-4 h-4 mx-auto text-accent" />
+                <Sun className="w-4 h-4 mx-auto text-foreground" />
                 <p className="text-xl font-display font-bold text-foreground mt-1">{insights.sunPoopRate}%</p>
                 <p className="text-[10px] text-muted-foreground font-display">poop rate</p>
               </div>
