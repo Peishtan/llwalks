@@ -203,7 +203,8 @@ const History = () => {
         <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
           <Button
             onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
-            className="w-full h-14 rounded-2xl text-lg font-display font-bold shadow-lg bg-primary text-primary-foreground"
+            className="w-full h-14 rounded-2xl text-lg font-display font-bold shadow-lg"
+            style={{ background: '#8D6E63', color: '#FFF8F0' }}
           >
             <PawPrint className="w-5 h-5 mr-2" />
             {user ? 'Log a Walk' : 'Login to Log'}
