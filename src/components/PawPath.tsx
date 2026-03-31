@@ -341,21 +341,31 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
           </div>
         )}
 
-        {/* Hidden SVG for path measurement */}
+        {/* SVG dual-layered path */}
         <svg
           className="absolute inset-0 w-full h-full z-10 pointer-events-none"
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Visible trail */}
+          {/* Bottom layer — thick dark outline */}
+          <path
+            d={pathD}
+            fill="none"
+            stroke="#3E2723"
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={0.8}
+          />
+          {/* Top layer — lighter inner stroke */}
           <path
             d={pathD}
             fill="none"
             stroke={theme.pathStroke}
-            strokeWidth="7"
-            strokeDasharray="14,7"
+            strokeWidth="5"
             strokeLinecap="round"
-            opacity={0.7}
+            strokeLinejoin="round"
+            opacity={0.9}
           />
           {/* Hidden reference path for getPointAtLength */}
           <path
@@ -372,7 +382,6 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
           const dayNum = i + 1;
           const isCurrentPos = i === position;
           const hadWalk = walkDays.has(dayNum);
-          const walkedColor = WALKED_COLORS[i % WALKED_COLORS.length];
 
           return (
             <div
@@ -388,22 +397,20 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
               <div
                 className="flex items-center justify-center rounded-full font-display font-bold transition-all duration-300"
                 style={{
-                  width: isCurrentPos ? 44 : 30,
-                  height: isCurrentPos ? 44 : 30,
+                  width: isCurrentPos ? 46 : 32,
+                  height: isCurrentPos ? 46 : 32,
                   backgroundColor: isCurrentPos
-                    ? 'rgba(255,255,255,0.9)'
+                    ? 'rgba(255,255,255,0.95)'
                     : hadWalk
-                      ? walkedColor
-                      : theme.tileFill,
-                  border: `2.5px solid ${isCurrentPos ? '#F5A623' : hadWalk ? '#795548' : theme.tileStroke}`,
+                      ? '#C9B896D9'
+                      : '#C9B896D9',
+                  border: `2.5px solid ${isCurrentPos ? '#F5A623' : '#3E2723'}`,
                   boxShadow: isCurrentPos
-                    ? '0 0 16px rgba(245,166,35,0.6), 0 4px 12px rgba(0,0,0,0.3)'
-                    : '0 2px 6px rgba(0,0,0,0.25)',
-                  opacity: hadWalk && !isCurrentPos ? 0.9 : 1,
+                    ? '0 0 18px rgba(245,166,35,0.7), 0 4px 12px rgba(0,0,0,0.4)'
+                    : '0 4px 6px rgba(0,0,0,0.3)',
                 }}
               >
                 {isCurrentPos ? (
-                  /* Avatar centered in tile */
                   <motion.img
                     key={`ll-${position}-${selectedMonth}-${selectedYear}`}
                     src={llAvatar}
@@ -413,11 +420,11 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   />
                 ) : hadWalk ? (
-                  <span className="text-xs" style={{ color: '#FFF8F0' }}>🐾</span>
+                  <span className="text-xs" style={{ color: '#3E2723' }}>🐾</span>
                 ) : (
                   <span
                     className="text-[9px] sm:text-[10px] font-bold"
-                    style={{ color: theme.textColor }}
+                    style={{ color: '#3E2723' }}
                   >
                     {dayNum}
                   </span>
