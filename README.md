@@ -1,8 +1,36 @@
-# Welcome to your Lovable project
+# LL Walks 🐾
+
+A charming dog-walking tracker disguised as a storybook board game. Follow LL, the hiking dog, along a winding trail as you log daily walks throughout the month.
+
+## Features
+
+### 🗺️ Path (Home)
+
+The Path page is an interactive game board that tracks your daily walks on a beautiful illustrated map. Each month features a unique storybook-themed background — from snowy mountain cabins in January to cherry blossom gardens in April, desert oases in August, and northern lights in December.
+
+- **S-curve trail** — A winding dashed path snakes across the board with a tile for each day of the month
+- **LL's avatar** — Bounces to the latest day you've logged a walk, showing your progress at a glance
+- **Monthly themes** — 12 hand-illustrated backgrounds with unique color palettes, trail styles, and goal landmarks
+- **Month selector** — Browse past months to see your walking history on each themed board
+- **Progress tracker** — Shows how many days you've walked out of the total days in the month
+
+### 📅 History
+
+The History page gives you a detailed calendar view of all your logged activities.
+
+- **Calendar view** — Tap any day to see what was logged (walks, pees, poops) with weather and notes
+- **Monthly stats** — At-a-glance counts of walks, poops, and pees for the selected month
+- **Activity management** — Delete or adjust logged entries directly from the day detail view
+- **Weather insights** — Data stories about your walking patterns: streak tracking, sunny vs. rainy walk breakdowns, and rain-poop correlation analysis
+- **Quick logging** — Log a walk directly from the History page without switching back
+
+### 🔐 Authentication
+
+Sign up and log in to save your data. All activities are tied to your account and persist across sessions.
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**URL**: https://lovable.dev/projects/c53fa0af-96f2-40bf-986b-ffd746b40d3d
 
 ## How can I edit this code?
 
