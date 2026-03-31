@@ -10,6 +10,7 @@ import mayBg from '@/assets/themes/may-bg.jpg';
 import juneBg from '@/assets/themes/june-bg.jpg';
 import septemberBg from '@/assets/themes/september-bg.jpg';
 import decemberBg from '@/assets/themes/december-bg.jpg';
+import augustBg from '@/assets/themes/august-bg.jpg';
 import {
   Select,
   SelectContent,
