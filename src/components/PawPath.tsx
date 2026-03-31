@@ -11,6 +11,7 @@ import juneBg from '@/assets/themes/june-bg.jpg';
 import septemberBg from '@/assets/themes/september-bg.jpg';
 import decemberBg from '@/assets/themes/december-bg.jpg';
 import augustBg from '@/assets/themes/august-bg.jpg';
+import marchBg from '@/assets/themes/march-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -64,15 +65,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#2E4A30',
   },
   2: {
-    name: 'Spring Buds',
-    goalIcon: 'First Bloom 🌱',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 30%, #A5D6A7 60%, #81C784 100%)',
-    pathStroke: '#66BB6A',
+    name: 'Highland Moor',
+    goalIcon: 'Stone Cairn 🪨',
+    backgroundType: 'image',
+    backgroundValue: marchBg,
+    pathStroke: '#6D4C41',
     emoji: '🌿',
-    tileStroke: '#4CAF50',
-    tileFill: '#C8E6C9',
-    textColor: '#1B5E20',
+    tileStroke: '#4E342E',
+    tileFill: '#D7CCC8',
+    textColor: '#3E2723',
   },
   3: {
     name: 'Cherry Blossoms',
