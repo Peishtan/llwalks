@@ -9,6 +9,7 @@ import aprilBg from '@/assets/themes/april-bg.jpg';
 import mayBg from '@/assets/themes/may-bg.jpg';
 import juneBg from '@/assets/themes/june-bg.jpg';
 import septemberBg from '@/assets/themes/september-bg.jpg';
+import decemberBg from '@/assets/themes/december-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -161,15 +162,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#263238',
   },
   11: {
-    name: 'Winter Wonderland',
-    goalIcon: 'Holiday Hearth 🎄',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 25%, #FFCDD2 50%, #EF9A9A 75%, #E8F5E9 100%)',
-    pathStroke: '#388E3C',
+    name: 'Northern Lights',
+    goalIcon: 'Aurora Village ✨',
+    backgroundType: 'image',
+    backgroundValue: decemberBg,
+    pathStroke: '#81C784',
     emoji: '🎄',
-    tileStroke: '#1B5E20',
+    tileStroke: '#2E7D32',
     tileFill: '#C8E6C9',
-    textColor: '#1B5E20',
+    textColor: '#E8F5E9',
   },
 };
 
