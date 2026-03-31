@@ -1,8 +1,10 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PawPrint, ChevronDown } from 'lucide-react';
 import { getDaysInMonth, format } from 'date-fns';
 import llAvatar from '@/assets/ll-avatar-transparent.png';
+import januaryBg from '@/assets/themes/january-bg.jpg';
+import julyBg from '@/assets/themes/july-bg.jpg';
+import octoberBg from '@/assets/themes/october-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -14,169 +16,275 @@ import {
 interface PawPathProps {
   walkDays: Set<number>;
   isRaining: boolean;
-  selectedMonth: number; // 0-indexed
+  selectedMonth: number;
   selectedYear: number;
   onMonthChange: (month: number, year: number) => void;
-  availableMonths?: { month: number; year: number }[];
 }
 
-// Monthly theme definitions
-const THEMES: Record<number, {
+// Theme config with backgroundType support
+interface ThemeConfig {
   name: string;
-  goalName: string;
-  bgGradient: string;
+  goalIcon: string;
+  backgroundType: 'gradient' | 'image';
+  backgroundValue: string;
   pathStroke: string;
-  overlayColor: string;
   emoji: string;
-}> = {
-  0: { name: 'Snowy Peaks', goalName: 'Mountain Summit ⛰️', bgGradient: 'linear-gradient(180deg, hsl(210 30% 92%) 0%, hsl(200 25% 85%) 40%, hsl(38 40% 92%) 100%)', pathStroke: '#8D99A6', overlayColor: 'rgba(230,240,250,0.35)', emoji: '❄️' },
-  1: { name: 'Cozy Cabin', goalName: 'Warm Hearth 🏠', bgGradient: 'linear-gradient(180deg, hsl(25 30% 88%) 0%, hsl(30 35% 85%) 40%, hsl(20 25% 80%) 100%)', pathStroke: '#A1887F', overlayColor: 'rgba(245,235,220,0.35)', emoji: '🧣' },
-  2: { name: 'Spring Buds', goalName: 'First Bloom 🌱', bgGradient: 'linear-gradient(180deg, hsl(120 30% 90%) 0%, hsl(100 35% 88%) 40%, hsl(80 30% 85%) 100%)', pathStroke: '#81A87A', overlayColor: 'rgba(220,240,220,0.35)', emoji: '🌿' },
-  3: { name: 'Cherry Blossoms', goalName: 'Petal Path 🌸', bgGradient: 'linear-gradient(180deg, hsl(340 40% 92%) 0%, hsl(350 35% 90%) 40%, hsl(30 30% 88%) 100%)', pathStroke: '#C48B9F', overlayColor: 'rgba(250,230,240,0.35)', emoji: '🌸' },
-  4: { name: 'Wildflower Meadow', goalName: 'Garden Gate 🌺', bgGradient: 'linear-gradient(180deg, hsl(90 40% 88%) 0%, hsl(120 35% 85%) 40%, hsl(50 40% 88%) 100%)', pathStroke: '#7EA87A', overlayColor: 'rgba(230,245,225,0.35)', emoji: '🌼' },
-  5: { name: 'Sunny Trail', goalName: 'Sunshine Summit ☀️', bgGradient: 'linear-gradient(180deg, hsl(45 60% 90%) 0%, hsl(40 55% 85%) 40%, hsl(35 45% 82%) 100%)', pathStroke: '#D4943A', overlayColor: 'rgba(255,248,230,0.35)', emoji: '☀️' },
-  6: { name: 'Beach Walk', goalName: 'Seaside Cove 🏖️', bgGradient: 'linear-gradient(180deg, hsl(195 50% 88%) 0%, hsl(45 50% 88%) 40%, hsl(35 40% 85%) 100%)', pathStroke: '#7EB5C9', overlayColor: 'rgba(225,245,255,0.35)', emoji: '🐚' },
-  7: { name: 'Forest Adventure', goalName: 'Treetop Canopy 🌲', bgGradient: 'linear-gradient(180deg, hsl(130 30% 85%) 0%, hsl(140 35% 78%) 40%, hsl(100 25% 82%) 100%)', pathStroke: '#6B8F5E', overlayColor: 'rgba(215,235,210,0.35)', emoji: '🌲' },
-  8: { name: 'Harvest Path', goalName: 'Harvest Barn 🌾', bgGradient: 'linear-gradient(180deg, hsl(40 45% 88%) 0%, hsl(35 50% 82%) 40%, hsl(25 40% 78%) 100%)', pathStroke: '#B8945A', overlayColor: 'rgba(245,238,220,0.35)', emoji: '🌾' },
-  9: { name: 'Autumn Leaves', goalName: 'Cozy Campfire 🍂', bgGradient: 'linear-gradient(180deg, hsl(25 50% 85%) 0%, hsl(15 55% 78%) 40%, hsl(35 45% 80%) 100%)', pathStroke: '#C4703A', overlayColor: 'rgba(245,230,215,0.35)', emoji: '🍂' },
-  10: { name: 'Misty Morning', goalName: 'Moonlit Peak 🌙', bgGradient: 'linear-gradient(180deg, hsl(220 15% 88%) 0%, hsl(240 10% 85%) 40%, hsl(260 12% 82%) 100%)', pathStroke: '#8888A0', overlayColor: 'rgba(235,235,245,0.35)', emoji: '🌫️' },
-  11: { name: 'Winter Wonderland', goalName: 'Holiday Hearth 🎄', bgGradient: 'linear-gradient(180deg, hsl(200 20% 90%) 0%, hsl(150 30% 88%) 40%, hsl(0 40% 88%) 100%)', pathStroke: '#7AAF7A', overlayColor: 'rgba(235,248,235,0.35)', emoji: '🎄' },
+  tileStroke: string;
+  tileFill: string;
+  textColor: string;
+}
+
+const THEMES: Record<number, ThemeConfig> = {
+  0: {
+    name: 'Snowy Peaks',
+    goalIcon: 'Cozy Cabin Hearth 🏠',
+    backgroundType: 'image',
+    backgroundValue: januaryBg,
+    pathStroke: '#7BA7C2',
+    emoji: '❄️',
+    tileStroke: '#5A8BA8',
+    tileFill: '#D6EAF5',
+    textColor: '#2C3E50',
+  },
+  1: {
+    name: 'Frosty Forest',
+    goalIcon: 'Warm Hearth 🔥',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #D5E8D4 0%, #A8D5BA 30%, #7EC8A0 60%, #B8D4A8 100%)',
+    pathStroke: '#5C8A5E',
+    emoji: '🧣',
+    tileStroke: '#4A7A4C',
+    tileFill: '#C8E6C9',
+    textColor: '#2E4A30',
+  },
+  2: {
+    name: 'Spring Buds',
+    goalIcon: 'First Bloom 🌱',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 30%, #A5D6A7 60%, #81C784 100%)',
+    pathStroke: '#66BB6A',
+    emoji: '🌿',
+    tileStroke: '#4CAF50',
+    tileFill: '#C8E6C9',
+    textColor: '#1B5E20',
+  },
+  3: {
+    name: 'Cherry Blossoms',
+    goalIcon: 'Petal Path 🌸',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 30%, #F48FB1 50%, #FCE4EC 100%)',
+    pathStroke: '#E91E63',
+    emoji: '🌸',
+    tileStroke: '#C2185B',
+    tileFill: '#F8BBD0',
+    textColor: '#880E4F',
+  },
+  4: {
+    name: 'Wildflower Meadow',
+    goalIcon: 'Garden Gate 🌺',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #F1F8E9 0%, #DCEDC8 30%, #C5E1A5 50%, #AED581 100%)',
+    pathStroke: '#8BC34A',
+    emoji: '🌼',
+    tileStroke: '#689F38',
+    tileFill: '#DCEDC8',
+    textColor: '#33691E',
+  },
+  5: {
+    name: 'Sunny Trail',
+    goalIcon: 'Sunshine Summit ☀️',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #FFF8E1 0%, #FFECB3 30%, #FFD54F 60%, #FFCA28 100%)',
+    pathStroke: '#FFA000',
+    emoji: '☀️',
+    tileStroke: '#FF8F00',
+    tileFill: '#FFECB3',
+    textColor: '#E65100',
+  },
+  6: {
+    name: 'Beach Walk',
+    goalIcon: 'Seaside Cove 🏖️',
+    backgroundType: 'image',
+    backgroundValue: julyBg,
+    pathStroke: '#00ACC1',
+    emoji: '🐚',
+    tileStroke: '#00838F',
+    tileFill: '#B2EBF2',
+    textColor: '#004D40',
+  },
+  7: {
+    name: 'Forest Adventure',
+    goalIcon: 'Treetop Canopy 🌲',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #66BB6A 30%, #388E3C 60%, #2E7D32 100%)',
+    pathStroke: '#2E7D32',
+    emoji: '🌲',
+    tileStroke: '#1B5E20',
+    tileFill: '#A5D6A7',
+    textColor: '#1B5E20',
+  },
+  8: {
+    name: 'Harvest Path',
+    goalIcon: 'Harvest Barn 🌾',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #FFF3E0 0%, #FFE0B2 30%, #FFCC80 50%, #FFB74D 100%)',
+    pathStroke: '#E65100',
+    emoji: '🌾',
+    tileStroke: '#BF360C',
+    tileFill: '#FFE0B2',
+    textColor: '#BF360C',
+  },
+  9: {
+    name: 'Autumn Woods',
+    goalIcon: 'Cozy Campfire 🍂',
+    backgroundType: 'image',
+    backgroundValue: octoberBg,
+    pathStroke: '#BF5B1B',
+    emoji: '🍂',
+    tileStroke: '#8D4004',
+    tileFill: '#FFCC80',
+    textColor: '#4E2700',
+  },
+  10: {
+    name: 'Misty Morning',
+    goalIcon: 'Moonlit Peak 🌙',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #ECEFF1 0%, #B0BEC5 30%, #78909C 60%, #546E7A 100%)',
+    pathStroke: '#546E7A',
+    emoji: '🌫️',
+    tileStroke: '#37474F',
+    tileFill: '#CFD8DC',
+    textColor: '#263238',
+  },
+  11: {
+    name: 'Winter Wonderland',
+    goalIcon: 'Holiday Hearth 🎄',
+    backgroundType: 'gradient',
+    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 25%, #FFCDD2 50%, #EF9A9A 75%, #E8F5E9 100%)',
+    pathStroke: '#388E3C',
+    emoji: '🎄',
+    tileStroke: '#1B5E20',
+    tileFill: '#C8E6C9',
+    textColor: '#1B5E20',
+  },
 };
 
-// Tile colors — warm brown, orange, beige
-const TILE_COLORS = [
-  '#A1887F', '#E8A957', '#D7C4A5',
-  '#8D6E63', '#F5A623', '#E8D5B7',
-  '#795548', '#D4943A', '#C9B896',
-];
+// Walked-day tile colors
+const WALKED_COLORS = ['#A1887F', '#D4943A', '#C9B896'];
 
-// Generate a smooth S-curve SVG path
-function generateSCurvePath(totalTiles: number, width: number, height: number): string {
-  const padding = { top: 40, bottom: 50, left: 30, right: 30 };
-  const usableW = width - padding.left - padding.right;
-  const usableH = height - padding.top - padding.bottom;
+// SVG dimensions
+const SVG_W = 400;
+const SVG_H = 540;
+
+// Generate a smooth winding S-curve path string
+function generateSCurvePath(totalTiles: number): string {
+  const margin = { top: 45, bottom: 55, left: 50, right: 50 };
   const rows = Math.ceil(totalTiles / 5);
-  const rowHeight = usableH / Math.max(rows - 1, 1);
+  const usableH = SVG_H - margin.top - margin.bottom;
+  const rowSpacing = usableH / Math.max(rows - 1, 1);
 
-  const points: { x: number; y: number }[] = [];
+  const waypoints: { x: number; y: number }[] = [];
 
   for (let r = 0; r < rows; r++) {
-    const y = padding.top + r * rowHeight;
-    const isEven = r % 2 === 0;
-    // Alternate between left-leaning and right-leaning curves
-    const xStart = isEven ? padding.left : width - padding.right;
-    const xEnd = isEven ? width - padding.right : padding.left;
+    const y = margin.top + r * rowSpacing;
+    const goRight = r % 2 === 0;
+    const xLeft = margin.left;
+    const xRight = SVG_W - margin.right;
 
-    if (r === 0) {
-      points.push({ x: xStart, y });
-      points.push({ x: xStart + (xEnd - xStart) * 0.5, y });
-      points.push({ x: xEnd, y });
+    if (goRight) {
+      waypoints.push({ x: xLeft, y }, { x: xRight, y });
     } else {
-      // Add a smooth turn from previous row
-      const prevY = padding.top + (r - 1) * rowHeight;
-      const midY = (prevY + y) / 2;
-      points.push({ x: xStart, y: midY });
-      points.push({ x: xStart, y });
-      points.push({ x: xStart + (xEnd - xStart) * 0.5, y });
-      points.push({ x: xEnd, y });
+      waypoints.push({ x: xRight, y }, { x: xLeft, y });
     }
   }
 
-  // Build smooth cubic bezier path
-  if (points.length < 2) return `M ${points[0]?.x ?? 0} ${points[0]?.y ?? 0}`;
+  if (waypoints.length < 2) return `M ${waypoints[0]?.x ?? 0} ${waypoints[0]?.y ?? 0}`;
 
-  let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const cpX1 = prev.x + (curr.x - prev.x) * 0.5;
-    const cpY1 = prev.y;
-    const cpX2 = prev.x + (curr.x - prev.x) * 0.5;
-    const cpY2 = curr.y;
-    d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
+  let d = `M ${waypoints[0].x} ${waypoints[0].y}`;
+
+  for (let i = 1; i < waypoints.length; i++) {
+    const prev = waypoints[i - 1];
+    const curr = waypoints[i];
+    // For horizontal segments use simple curve, for vertical turns use tight S
+    const dx = curr.x - prev.x;
+    const dy = curr.y - prev.y;
+
+    if (Math.abs(dy) < 2) {
+      // Horizontal — gentle wave
+      const cpY = prev.y + (Math.random() - 0.5) * 8;
+      d += ` C ${prev.x + dx * 0.33} ${cpY}, ${prev.x + dx * 0.66} ${cpY}, ${curr.x} ${curr.y}`;
+    } else {
+      // Vertical turn
+      d += ` C ${prev.x} ${prev.y + dy * 0.6}, ${curr.x} ${curr.y - dy * 0.6}, ${curr.x} ${curr.y}`;
+    }
   }
 
   return d;
 }
 
-const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChange, availableMonths }: PawPathProps) => {
-  const svgRef = useRef<SVGSVGElement>(null);
+const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChange }: PawPathProps) => {
   const pathRef = useRef<SVGPathElement>(null);
-  const [tilePositions, setTilePositions] = useState<{ x: number; y: number; angle: number }[]>([]);
+  const [tilePositions, setTilePositions] = useState<{ x: number; y: number }[]>([]);
 
   const totalSpaces = getDaysInMonth(new Date(selectedYear, selectedMonth));
   const theme = THEMES[selectedMonth];
 
-  const svgWidth = 400;
-  const svgHeight = 520;
+  // Stable path — memoized with a seed to avoid random jitter on re-render
+  const pathD = useMemo(() => generateSCurvePath(totalSpaces), [totalSpaces, selectedMonth]);
 
-  const pathD = useMemo(() => generateSCurvePath(totalSpaces, svgWidth, svgHeight), [totalSpaces]);
-
-  // Use getPointAtLength to place tiles along path
+  // Place tiles along the path using getPointAtLength
   useEffect(() => {
-    const pathEl = pathRef.current;
-    if (!pathEl) return;
+    const el = pathRef.current;
+    if (!el) return;
 
-    const totalLength = pathEl.getTotalLength();
-    const positions: { x: number; y: number; angle: number }[] = [];
+    const totalLen = el.getTotalLength();
+    const pts: { x: number; y: number }[] = [];
 
     for (let i = 0; i < totalSpaces; i++) {
       const ratio = totalSpaces > 1 ? i / (totalSpaces - 1) : 0;
-      const point = pathEl.getPointAtLength(ratio * totalLength);
-
-      // Get angle from nearby points for rotation
-      const delta = 0.5;
-      const p1 = pathEl.getPointAtLength(Math.max(0, ratio * totalLength - delta));
-      const p2 = pathEl.getPointAtLength(Math.min(totalLength, ratio * totalLength + delta));
-      const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
-
-      positions.push({ x: point.x, y: point.y, angle });
+      const pt = el.getPointAtLength(ratio * totalLen);
+      pts.push({ x: pt.x, y: pt.y });
     }
 
-    setTilePositions(positions);
+    setTilePositions(pts);
   }, [pathD, totalSpaces]);
 
-  // LL's position = latest walked day (0-indexed)
+  // LL position = latest walked day (0-indexed)
   const position = useMemo(() => {
     let max = -1;
     walkDays.forEach(d => { if (d - 1 > max) max = d - 1; });
     return max;
   }, [walkDays]);
 
-  // Build month options
+  // Month dropdown options (last 12 months)
   const monthOptions = useMemo(() => {
     const now = new Date();
     const opts: { month: number; year: number; label: string }[] = [];
-    // Show last 12 months
     for (let i = 0; i < 12; i++) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      opts.push({
-        month: d.getMonth(),
-        year: d.getFullYear(),
-        label: format(d, 'MMMM yyyy'),
-      });
+      opts.push({ month: d.getMonth(), year: d.getFullYear(), label: format(d, 'MMMM yyyy') });
     }
     return opts;
   }, []);
 
-  const currentSelectValue = `${selectedYear}-${selectedMonth}`;
+  const selectValue = `${selectedYear}-${selectedMonth}`;
 
   return (
     <div className="relative rounded-3xl overflow-hidden border-2 border-border shadow-xl">
-      {/* Month selector */}
-      <div className="relative z-30 px-4 py-2.5 flex items-center justify-between" style={{ background: 'hsl(var(--card))' }}>
+      {/* Month selector bar */}
+      <div className="relative z-30 px-4 py-2.5 flex items-center justify-between border-b border-border" style={{ background: 'hsl(var(--card))' }}>
         <div className="flex items-center gap-2">
           <span className="text-lg">{theme.emoji}</span>
           <span className="text-xs font-display font-bold text-foreground">{theme.name}</span>
         </div>
         <Select
-          value={currentSelectValue}
+          value={selectValue}
           onValueChange={(val) => {
             const [y, m] = val.split('-').map(Number);
             onMonthChange(m, y);
           }}
         >
-          <SelectTrigger className="w-[160px] h-8 text-xs font-display font-bold bg-muted border-border rounded-xl">
+          <SelectTrigger className="w-[155px] h-8 text-xs font-display font-bold bg-muted border-border rounded-xl">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -189,18 +297,23 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
         </Select>
       </div>
 
-      {/* Board area */}
-      <div className="relative w-full" style={{ paddingBottom: '130%' }}>
-        {/* Theme background */}
-        <div
-          className="absolute inset-0"
-          style={{ background: theme.bgGradient }}
-        />
-        <div className="absolute inset-0" style={{ background: theme.overlayColor }} />
+      {/* Board */}
+      <div className="relative w-full" style={{ paddingBottom: '135%' }}>
+        {/* Background */}
+        {theme.backgroundType === 'image' ? (
+          <img
+            src={theme.backgroundValue}
+            alt={`${theme.name} scenery`}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0" style={{ background: theme.backgroundValue }} />
+        )}
 
         {/* Rain overlay */}
         {isRaining && (
-          <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none z-40 overflow-hidden">
             {Array.from({ length: 50 }).map((_, i) => (
               <div
                 key={i}
@@ -208,8 +321,7 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
                 style={{
                   left: `${Math.random() * 100}%`,
                   height: `${14 + Math.random() * 18}px`,
-                  background: 'hsl(var(--muted-foreground))',
-                  opacity: 0.4,
+                  background: 'rgba(180,200,220,0.6)',
                   animationDuration: `${0.5 + Math.random() * 0.5}s`,
                   animationDelay: `${Math.random() * 2}s`,
                 }}
@@ -218,129 +330,117 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
           </div>
         )}
 
-        {/* SVG path + tiles */}
+        {/* Hidden SVG for path measurement */}
         <svg
-          ref={svgRef}
-          className="absolute inset-0 w-full h-full z-10"
-          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* The trail path */}
+          {/* Visible trail */}
+          <path
+            d={pathD}
+            fill="none"
+            stroke={theme.pathStroke}
+            strokeWidth="7"
+            strokeDasharray="14,7"
+            strokeLinecap="round"
+            opacity={0.7}
+          />
+          {/* Hidden reference path for getPointAtLength */}
           <path
             ref={pathRef}
             d={pathD}
             fill="none"
-            stroke={theme.pathStroke}
-            strokeWidth="6"
-            strokeDasharray="12,6"
-            strokeLinecap="round"
-            opacity={0.6}
+            stroke="transparent"
+            strokeWidth="0"
           />
-
-          {/* Tile circles */}
-          {tilePositions.map((pos, i) => {
-            const dayNum = i + 1;
-            const isCurrentPos = i === position;
-            const hadWalk = walkDays.has(dayNum);
-            const color = TILE_COLORS[i % TILE_COLORS.length];
-            const tileR = isCurrentPos ? 16 : 12;
-
-            return (
-              <g key={i}>
-                {/* Shadow */}
-                <circle
-                  cx={pos.x}
-                  cy={pos.y + 2}
-                  r={tileR}
-                  fill="rgba(0,0,0,0.15)"
-                />
-                {/* Main tile */}
-                <circle
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={tileR}
-                  fill={isCurrentPos ? 'transparent' : hadWalk ? '#C9B896' : color}
-                  stroke={isCurrentPos ? '#F5A623' : hadWalk ? '#A1887F' : '#795548'}
-                  strokeWidth={isCurrentPos ? 3 : 2}
-                  opacity={hadWalk && !isCurrentPos ? 0.85 : 1}
-                />
-                {/* Content */}
-                {isCurrentPos ? null : hadWalk ? (
-                  // Small paw print for walked days — using a simple circle dot pattern
-                  <>
-                    <circle cx={pos.x} cy={pos.y} r={2.5} fill="#5D4037" />
-                    <circle cx={pos.x - 3} cy={pos.y - 4} r={1.5} fill="#5D4037" />
-                    <circle cx={pos.x + 3} cy={pos.y - 4} r={1.5} fill="#5D4037" />
-                    <circle cx={pos.x - 5} cy={pos.y - 1} r={1.3} fill="#5D4037" />
-                    <circle cx={pos.x + 5} cy={pos.y - 1} r={1.3} fill="#5D4037" />
-                  </>
-                ) : (
-                  <text
-                    x={pos.x}
-                    y={pos.y + 4}
-                    textAnchor="middle"
-                    fill="#5D4037"
-                    fontSize="9"
-                    fontWeight="bold"
-                    fontFamily="'Fredoka', sans-serif"
-                  >
-                    {dayNum}
-                  </text>
-                )}
-              </g>
-            );
-          })}
         </svg>
 
-        {/* LL Avatar overlay (HTML for framer-motion) */}
-        {position >= 0 && tilePositions[position] && (
-          <motion.div
-            key={`ll-${position}-${selectedMonth}-${selectedYear}`}
-            className="absolute z-30 pointer-events-none"
-            style={{
-              left: `${(tilePositions[position].x / svgWidth) * 100}%`,
-              top: `${(tilePositions[position].y / svgHeight) * 100}%`,
-              transform: 'translate(-50%, -50%)',
-            }}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1, y: [0, -6, 0] }}
-            transition={{ duration: 0.5 }}
-          >
+        {/* Tile wrapper divs — positioned via percentage coords */}
+        {tilePositions.map((pos, i) => {
+          const dayNum = i + 1;
+          const isCurrentPos = i === position;
+          const hadWalk = walkDays.has(dayNum);
+          const walkedColor = WALKED_COLORS[i % WALKED_COLORS.length];
+
+          return (
             <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center"
+              key={i}
+              className="absolute z-20 flex items-center justify-center"
               style={{
-                border: '3px solid #F5A623',
-                boxShadow: '0 0 14px rgba(245,166,35,0.5), 0 3px 8px rgba(0,0,0,0.25)',
-                background: 'hsl(var(--card))',
+                left: `${(pos.x / SVG_W) * 100}%`,
+                top: `${(pos.y / SVG_H) * 100}%`,
+                transform: 'translate(-50%, -50%)',
               }}
             >
-              <img
-                src={llAvatar}
-                alt="LL"
-                className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-lg"
-              />
+              {/* Day tile circle */}
+              <div
+                className="flex items-center justify-center rounded-full font-display font-bold transition-all duration-300"
+                style={{
+                  width: isCurrentPos ? 44 : 30,
+                  height: isCurrentPos ? 44 : 30,
+                  backgroundColor: isCurrentPos
+                    ? 'rgba(255,255,255,0.9)'
+                    : hadWalk
+                      ? walkedColor
+                      : theme.tileFill,
+                  border: `2.5px solid ${isCurrentPos ? '#F5A623' : hadWalk ? '#795548' : theme.tileStroke}`,
+                  boxShadow: isCurrentPos
+                    ? '0 0 16px rgba(245,166,35,0.6), 0 4px 12px rgba(0,0,0,0.3)'
+                    : '0 2px 6px rgba(0,0,0,0.25)',
+                  opacity: hadWalk && !isCurrentPos ? 0.9 : 1,
+                }}
+              >
+                {isCurrentPos ? (
+                  /* Avatar centered in tile */
+                  <motion.img
+                    key={`ll-${position}-${selectedMonth}-${selectedYear}`}
+                    src={llAvatar}
+                    alt="LL, the hiking dog"
+                    className="w-9 h-9 object-contain drop-shadow-lg"
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                ) : hadWalk ? (
+                  <span className="text-xs" style={{ color: '#FFF8F0' }}>🐾</span>
+                ) : (
+                  <span
+                    className="text-[9px] sm:text-[10px] font-bold"
+                    style={{ color: theme.textColor }}
+                  >
+                    {dayNum}
+                  </span>
+                )}
+              </div>
             </div>
-          </motion.div>
-        )}
+          );
+        })}
 
-        {/* Finish label */}
+        {/* Goal label at end */}
         {tilePositions.length > 0 && (
           <div
             className="absolute z-20 pointer-events-none"
             style={{
-              left: `${(tilePositions[tilePositions.length - 1].x / svgWidth) * 100}%`,
-              top: `${((tilePositions[tilePositions.length - 1].y + 28) / svgHeight) * 100}%`,
+              left: `${(tilePositions[tilePositions.length - 1].x / SVG_W) * 100}%`,
+              top: `${((tilePositions[tilePositions.length - 1].y + 26) / SVG_H) * 100}%`,
               transform: 'translateX(-50%)',
             }}
           >
-            <span className="text-[8px] sm:text-[10px] font-display font-bold whitespace-nowrap text-foreground">
-              {theme.goalName}
+            <span
+              className="text-[8px] sm:text-[10px] font-display font-bold whitespace-nowrap px-2 py-0.5 rounded-full"
+              style={{
+                color: theme.textColor,
+                background: 'rgba(255,255,255,0.75)',
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              {theme.goalIcon}
             </span>
           </div>
         )}
       </div>
 
-      {/* Path complete celebration */}
+      {/* Path complete */}
       {position >= totalSpaces - 1 && position >= 0 && (
         <motion.div
           initial={{ scale: 0 }}
