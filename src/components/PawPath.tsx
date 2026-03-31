@@ -265,12 +265,14 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
     return max;
   }, [walkDays]);
 
-  // Month dropdown options (last 12 months)
+  // Month dropdown options — forward-looking desk calendar starting March 2026
   const monthOptions = useMemo(() => {
-    const now = new Date();
+    const startMonth = 2; // March (0-indexed)
+    const startYear = 2026;
     const opts: { month: number; year: number; label: string }[] = [];
+    // Show 12 months forward from launch month
     for (let i = 0; i < 12; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const d = new Date(startYear, startMonth + i, 1);
       opts.push({ month: d.getMonth(), year: d.getFullYear(), label: format(d, 'MMMM yyyy') });
     }
     return opts;
