@@ -10,6 +10,7 @@ import mayBg from '@/assets/themes/may-bg.jpg';
 import juneBg from '@/assets/themes/june-bg.jpg';
 import septemberBg from '@/assets/themes/september-bg.jpg';
 import decemberBg from '@/assets/themes/december-bg.jpg';
+import augustBg from '@/assets/themes/august-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -118,15 +119,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#004D40',
   },
   7: {
-    name: 'Forest Adventure',
-    goalIcon: 'Treetop Canopy 🌲',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #E8F5E9 0%, #66BB6A 30%, #388E3C 60%, #2E7D32 100%)',
-    pathStroke: '#2E7D32',
-    emoji: '🌲',
-    tileStroke: '#1B5E20',
-    tileFill: '#A5D6A7',
-    textColor: '#1B5E20',
+    name: 'Desert Oasis',
+    goalIcon: 'Turquoise Pool 🏜️',
+    backgroundType: 'image',
+    backgroundValue: augustBg,
+    pathStroke: '#E65100',
+    emoji: '🏜️',
+    tileStroke: '#BF360C',
+    tileFill: '#FFE0B2',
+    textColor: '#4E2700',
   },
   8: {
     name: 'Harvest Moon',
