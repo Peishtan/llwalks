@@ -12,6 +12,7 @@ import septemberBg from '@/assets/themes/september-bg.jpg';
 import decemberBg from '@/assets/themes/december-bg.jpg';
 import augustBg from '@/assets/themes/august-bg.jpg';
 import marchBg from '@/assets/themes/march-bg.jpg';
+import februaryBg from '@/assets/themes/february-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -54,15 +55,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#2C3E50',
   },
   1: {
-    name: 'Frosty Forest',
-    goalIcon: 'Warm Hearth 🔥',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #D5E8D4 0%, #A8D5BA 30%, #7EC8A0 60%, #B8D4A8 100%)',
-    pathStroke: '#5C8A5E',
-    emoji: '🧣',
-    tileStroke: '#4A7A4C',
-    tileFill: '#C8E6C9',
-    textColor: '#2E4A30',
+    name: 'Ice Canyon',
+    goalIcon: 'Crystal Cave 🧊',
+    backgroundType: 'image',
+    backgroundValue: februaryBg,
+    pathStroke: '#90CAF9',
+    emoji: '🧊',
+    tileStroke: '#42A5F5',
+    tileFill: '#E3F2FD',
+    textColor: '#0D47A1',
   },
   2: {
     name: 'Highland Moor',
