@@ -19,31 +19,28 @@ const Index = () => {
   const [showLogDialog, setShowLogDialog] = useState(false);
   const navigate = useNavigate();
 
-  const totalSpaces = getDaysInMonth(new Date());
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+
+  const selectedMonthStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
 
   const walkDays = useMemo(() => {
     const days = new Set<number>();
     activities.forEach(a => {
-      if (a.activity_type === 'walk' && a.logged_at.startsWith(currentMonth)) {
+      if (a.activity_type === 'walk' && a.logged_at.startsWith(selectedMonthStr)) {
         const day = new Date(a.logged_at).getDate();
         days.add(day);
       }
     });
     return days;
-  }, [activities, currentMonth]);
-
-  const latestWalkDay = useMemo(() => {
-    let max = 0;
-    walkDays.forEach(d => { if (d > max) max = d; });
-    return max;
-  }, [walkDays]);
+  }, [activities, selectedMonthStr]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
-          <PawPrint className="w-10 h-10" style={{ color: '#5D4037' }} />
+          <PawPrint className="w-10 h-10 text-foreground" />
         </motion.div>
       </div>
     );
@@ -56,6 +53,13 @@ const Index = () => {
     setShowLogDialog(false);
   };
 
+  const handleMonthChange = (month: number, year: number) => {
+    setSelectedMonth(month);
+    setSelectedYear(year);
+  };
+
+  const isCurrentMonth = selectedMonth === now.getMonth() && selectedYear === now.getFullYear();
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -64,20 +68,20 @@ const Index = () => {
           <div className="flex items-center gap-2">
             <img src={llAvatar} alt="LL" className="w-8 h-8 rounded-full object-contain" />
             <div>
-              <h1 className="text-lg font-display font-bold" style={{ color: '#5D4037' }}>
+              <h1 className="text-lg font-display font-bold text-foreground">
                 LL Walks
               </h1>
-              <p className="text-xs font-body" style={{ color: '#8D6E63' }}>
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              <p className="text-xs font-body text-muted-foreground">
+                {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </p>
             </div>
           </div>
           {user ? (
-            <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl font-display" style={{ color: '#5D4037' }}>
+            <Button variant="ghost" size="sm" onClick={signOut} className="text-xs rounded-xl font-display text-foreground">
               Logout
             </Button>
           ) : (
-            <Button variant="ghost" size="sm" onClick={() => navigate('/auth')} className="text-xs rounded-xl font-display" style={{ color: '#5D4037' }}>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/auth')} className="text-xs rounded-xl font-display text-foreground">
               Login
             </Button>
           )}
@@ -87,33 +91,28 @@ const Index = () => {
       {/* Main content */}
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <PawPath walkDays={walkDays} isRaining={false} />
+          <PawPath
+            walkDays={walkDays}
+            isRaining={false}
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            onMonthChange={handleMonthChange}
+          />
         </motion.div>
 
-        {latestWalkDay >= totalSpaces && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="text-center rounded-2xl p-4 border-2"
-            style={{ background: '#F5E6D0', borderColor: '#D4943A' }}
-          >
-            <span className="text-4xl">🏆</span>
-            <p className="font-display font-bold text-lg mt-2" style={{ color: '#5D4037' }}>Path Complete!</p>
-            <p className="text-sm" style={{ color: '#8D6E63' }}>Amazing job this month!</p>
+        {/* Log a Walk button — only show for current month */}
+        {isCurrentMonth && (
+          <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
+            <Button
+              onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
+              className="w-full h-16 rounded-2xl text-lg font-display font-bold shadow-lg"
+              style={{ background: '#8D6E63', color: '#FFF8F0' }}
+            >
+              <PawPrint className="w-6 h-6 mr-2" />
+              {user ? 'Log a Walk' : 'Login to Log'}
+            </Button>
           </motion.div>
         )}
-
-        {/* Log a Walk button */}
-        <motion.div whileTap={{ scale: user ? 0.97 : 1 }}>
-          <Button
-            onClick={() => user ? setShowLogDialog(true) : navigate('/auth')}
-            className="w-full h-16 rounded-2xl text-lg font-display font-bold shadow-lg"
-            style={{ background: '#8D6E63', color: '#FFF8F0' }}
-          >
-            <PawPrint className="w-6 h-6 mr-2" />
-            {user ? 'Log a Walk' : 'Login to Log'}
-          </Button>
-        </motion.div>
       </div>
 
       <LogWalkDialog
