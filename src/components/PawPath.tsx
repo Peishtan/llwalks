@@ -6,6 +6,7 @@ import januaryBg from '@/assets/themes/january-bg.jpg';
 import julyBg from '@/assets/themes/july-bg.jpg';
 import octoberBg from '@/assets/themes/october-bg.jpg';
 import aprilBg from '@/assets/themes/april-bg.jpg';
+import mayBg from '@/assets/themes/may-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -81,15 +82,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#880E4F',
   },
   4: {
-    name: 'Wildflower Meadow',
-    goalIcon: 'Garden Gate 🌺',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #F1F8E9 0%, #DCEDC8 30%, #C5E1A5 50%, #AED581 100%)',
-    pathStroke: '#8BC34A',
-    emoji: '🌼',
-    tileStroke: '#689F38',
-    tileFill: '#DCEDC8',
-    textColor: '#33691E',
+    name: 'Ancient Forest',
+    goalIcon: 'Old Growth Tree 🌲',
+    backgroundType: 'image',
+    backgroundValue: mayBg,
+    pathStroke: '#4A7A3D',
+    emoji: '🌿',
+    tileStroke: '#33691E',
+    tileFill: '#C8E6C9',
+    textColor: '#1B5E20',
   },
   5: {
     name: 'Sunny Trail',
