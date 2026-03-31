@@ -420,7 +420,13 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                   />
                 ) : hadWalk ? (
-                  <span className="text-xs" style={{ color: '#3E2723' }}>🐾</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#5D4037" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="12" cy="17" rx="5" ry="6" />
+                    <circle cx="6" cy="8" r="3" />
+                    <circle cx="18" cy="8" r="3" />
+                    <circle cx="10" cy="4" r="2.5" />
+                    <circle cx="14" cy="4" r="2.5" />
+                  </svg>
                 ) : (
                   <span
                     className="text-[9px] sm:text-[10px] font-bold"
