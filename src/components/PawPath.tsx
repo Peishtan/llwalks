@@ -7,6 +7,7 @@ import julyBg from '@/assets/themes/july-bg.jpg';
 import octoberBg from '@/assets/themes/october-bg.jpg';
 import aprilBg from '@/assets/themes/april-bg.jpg';
 import mayBg from '@/assets/themes/may-bg.jpg';
+import juneBg from '@/assets/themes/june-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -93,15 +94,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#1B5E20',
   },
   5: {
-    name: 'Sunny Trail',
-    goalIcon: 'Sunshine Summit ☀️',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #FFF8E1 0%, #FFECB3 30%, #FFD54F 60%, #FFCA28 100%)',
-    pathStroke: '#FFA000',
-    emoji: '☀️',
-    tileStroke: '#FF8F00',
-    tileFill: '#FFECB3',
-    textColor: '#E65100',
+    name: 'Alpine Meadow',
+    goalIcon: 'Mount Rainier Summit 🏔️',
+    backgroundType: 'image',
+    backgroundValue: juneBg,
+    pathStroke: '#5C6BC0',
+    emoji: '🌸',
+    tileStroke: '#3949AB',
+    tileFill: '#C5CAE9',
+    textColor: '#1A237E',
   },
   6: {
     name: 'Beach Walk',
