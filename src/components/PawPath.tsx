@@ -13,6 +13,7 @@ import decemberBg from '@/assets/themes/december-bg.jpg';
 import augustBg from '@/assets/themes/august-bg.jpg';
 import marchBg from '@/assets/themes/march-bg.jpg';
 import februaryBg from '@/assets/themes/february-bg.jpg';
+import novemberBg from '@/assets/themes/november-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -154,15 +155,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#4E2700',
   },
   10: {
-    name: 'Misty Morning',
-    goalIcon: 'Moonlit Peak 🌙',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #ECEFF1 0%, #B0BEC5 30%, #78909C 60%, #546E7A 100%)',
-    pathStroke: '#546E7A',
-    emoji: '🌫️',
-    tileStroke: '#37474F',
-    tileFill: '#CFD8DC',
-    textColor: '#263238',
+    name: 'Redwood Grove',
+    goalIcon: 'Ancient Tree 🌲',
+    backgroundType: 'image',
+    backgroundValue: novemberBg,
+    pathStroke: '#8D6E63',
+    emoji: '🍂',
+    tileStroke: '#5D4037',
+    tileFill: '#D7CCC8',
+    textColor: '#3E2723',
   },
   11: {
     name: 'Northern Lights',
