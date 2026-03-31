@@ -8,6 +8,7 @@ import octoberBg from '@/assets/themes/october-bg.jpg';
 import aprilBg from '@/assets/themes/april-bg.jpg';
 import mayBg from '@/assets/themes/may-bg.jpg';
 import juneBg from '@/assets/themes/june-bg.jpg';
+import septemberBg from '@/assets/themes/september-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -127,15 +128,15 @@ const THEMES: Record<number, ThemeConfig> = {
     textColor: '#1B5E20',
   },
   8: {
-    name: 'Harvest Path',
-    goalIcon: 'Harvest Barn 🌾',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #FFF3E0 0%, #FFE0B2 30%, #FFCC80 50%, #FFB74D 100%)',
-    pathStroke: '#E65100',
-    emoji: '🌾',
-    tileStroke: '#BF360C',
-    tileFill: '#FFE0B2',
-    textColor: '#BF360C',
+    name: 'Harvest Moon',
+    goalIcon: 'Stone Winery 🍇',
+    backgroundType: 'image',
+    backgroundValue: septemberBg,
+    pathStroke: '#CE93D8',
+    emoji: '🍇',
+    tileStroke: '#6A1B9A',
+    tileFill: '#E1BEE7',
+    textColor: '#4A148C',
   },
   9: {
     name: 'Autumn Woods',
