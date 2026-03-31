@@ -5,6 +5,7 @@ import llAvatar from '@/assets/ll-avatar-transparent.png';
 import januaryBg from '@/assets/themes/january-bg.jpg';
 import julyBg from '@/assets/themes/july-bg.jpg';
 import octoberBg from '@/assets/themes/october-bg.jpg';
+import aprilBg from '@/assets/themes/april-bg.jpg';
 import {
   Select,
   SelectContent,
@@ -70,12 +71,12 @@ const THEMES: Record<number, ThemeConfig> = {
   },
   3: {
     name: 'Cherry Blossoms',
-    goalIcon: 'Petal Path 🌸',
-    backgroundType: 'gradient',
-    backgroundValue: 'linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 30%, #F48FB1 50%, #FCE4EC 100%)',
-    pathStroke: '#E91E63',
+    goalIcon: 'Pagoda Garden 🌸',
+    backgroundType: 'image',
+    backgroundValue: aprilBg,
+    pathStroke: '#C2185B',
     emoji: '🌸',
-    tileStroke: '#C2185B',
+    tileStroke: '#AD1457',
     tileFill: '#F8BBD0',
     textColor: '#880E4F',
   },
