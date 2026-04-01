@@ -19,7 +19,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
     const totalWalks = walks.length;
 
     // Group walks by date to find unique walk dates
-    const walkDates = new Set(walks.map(a => a.logged_at.split('T')[0]));
+    const walkDates = new Set(walks.map(a => toSeattleDateStr(a.logged_at)));
     const poops = activities.filter(a => a.activity_type === 'poop');
 
     // Poop rate by weather
