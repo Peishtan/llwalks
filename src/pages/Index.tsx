@@ -20,7 +20,7 @@ const Index = () => {
   const [showLogDialog, setShowLogDialog] = useState(false);
   const navigate = useNavigate();
 
-  const now = new Date();
+  const now = getSeattleNow();
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
 
