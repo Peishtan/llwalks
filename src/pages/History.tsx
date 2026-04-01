@@ -35,7 +35,7 @@ const History = () => {
   const [viewMonth, setViewMonth] = useState(new Date());
   const [showLogDialog, setShowLogDialog] = useState(false);
   
-  const now = new Date();
+  const now = getSeattleNow();
 
   const calendarDays = useMemo(() => {
     const start = startOfMonth(viewMonth);
