@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sun, CloudRain, Flame, PawPrint } from 'lucide-react';
+import { toSeattleDateStr, getSeattleTodayStr } from '@/lib/timezone';
 import PoopIcon from '@/components/PoopIcon';
 import { motion } from 'framer-motion';
 
