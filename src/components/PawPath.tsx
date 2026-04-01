@@ -258,12 +258,18 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
     setTilePositions(pts);
   }, [pathD, totalSpaces]);
 
-  // LL position = latest walked day (0-indexed)
+  // LL position = today's date (0-indexed) for the current month, or latest walked day for past months
   const position = useMemo(() => {
+    const now = new Date();
+    const isCurrentMonth = selectedMonth === now.getMonth() && selectedYear === now.getFullYear();
+    if (isCurrentMonth) {
+      return now.getDate() - 1; // today's tile
+    }
+    // For past/future months, show on last walked day
     let max = -1;
     walkDays.forEach(d => { if (d - 1 > max) max = d - 1; });
     return max;
-  }, [walkDays]);
+  }, [walkDays, selectedMonth, selectedYear]);
 
   // Month dropdown options — forward-looking desk calendar starting March 2026
   const monthOptions = useMemo(() => {
