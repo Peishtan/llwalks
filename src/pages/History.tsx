@@ -71,7 +71,7 @@ const History = () => {
   // Monthly stats for the viewed month
   const monthlyStats = useMemo(() => {
     const monthStr = format(viewMonth, 'yyyy-MM');
-    const monthActs = activities.filter(a => a.logged_at.startsWith(monthStr));
+    const monthActs = activities.filter(a => toSeattleMonthStr(a.logged_at) === monthStr);
     return {
       walks: monthActs.filter(a => a.activity_type === 'walk').length,
       pees: monthActs.filter(a => a.activity_type === 'pee').length,
