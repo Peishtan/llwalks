@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { getDaysInMonth } from 'date-fns';
+import { getSeattleNow, toSeattleMonthStr, toSeattleDay } from '@/lib/timezone';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useActivities } from '@/hooks/useActivities';
@@ -19,7 +20,7 @@ const Index = () => {
   const [showLogDialog, setShowLogDialog] = useState(false);
   const navigate = useNavigate();
 
-  const now = new Date();
+  const now = getSeattleNow();
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
 
@@ -28,9 +29,8 @@ const Index = () => {
   const walkDays = useMemo(() => {
     const days = new Set<number>();
     activities.forEach(a => {
-      if (a.activity_type === 'walk' && a.logged_at.startsWith(selectedMonthStr)) {
-        const day = new Date(a.logged_at).getDate();
-        days.add(day);
+      if (a.activity_type === 'walk' && toSeattleMonthStr(a.logged_at) === selectedMonthStr) {
+        days.add(toSeattleDay(a.logged_at));
       }
     });
     return days;

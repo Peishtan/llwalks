@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sun, CloudRain, Flame, PawPrint } from 'lucide-react';
+import { toSeattleDateStr, getSeattleTodayStr } from '@/lib/timezone';
 import PoopIcon from '@/components/PoopIcon';
 import { motion } from 'framer-motion';
 
@@ -18,7 +19,7 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
     const totalWalks = walks.length;
 
     // Group walks by date to find unique walk dates
-    const walkDates = new Set(walks.map(a => a.logged_at.split('T')[0]));
+    const walkDates = new Set(walks.map(a => toSeattleDateStr(a.logged_at)));
     const poops = activities.filter(a => a.activity_type === 'poop');
 
     // Poop rate by weather
@@ -30,9 +31,9 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
     // Streak calculation
     const sortedDates = Array.from(walkDates).sort().reverse();
     let streak = 0;
-    const today = new Date();
+    const todayStr = getSeattleTodayStr();
     for (let i = 0; i < sortedDates.length; i++) {
-      const expected = new Date(today);
+      const expected = new Date(todayStr + 'T12:00:00');
       expected.setDate(expected.getDate() - i);
       const expectedStr = expected.toISOString().split('T')[0];
       if (sortedDates[i] === expectedStr) {

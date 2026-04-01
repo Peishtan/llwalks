@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import BottomNav from '@/components/BottomNav';
 import LogWalkDialog from '@/components/LogWalkDialog';
 import WeatherInsights from '@/components/WeatherInsights';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, parseISO, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
+import { isSameSeattleDay, toSeattleMonthStr, getSeattleNow } from '@/lib/timezone';
 import { motion } from 'framer-motion';
 import { Sun, CloudRain, PawPrint, Droplets, CalendarDays, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import PoopIcon from '@/components/PoopIcon';
@@ -34,7 +35,7 @@ const History = () => {
   const [viewMonth, setViewMonth] = useState(new Date());
   const [showLogDialog, setShowLogDialog] = useState(false);
   
-  const now = new Date();
+  const now = getSeattleNow();
 
   const calendarDays = useMemo(() => {
     const start = startOfMonth(viewMonth);
@@ -44,7 +45,7 @@ const History = () => {
 
   const dayActivities = useMemo(() => {
     if (!selectedDate) return [];
-    return activities.filter(a => isSameDay(parseISO(a.logged_at), selectedDate));
+    return activities.filter(a => isSameSeattleDay(a.logged_at, selectedDate));
   }, [selectedDate, activities]);
 
   const consolidatedActivities = useMemo(() => {
@@ -70,7 +71,7 @@ const History = () => {
   // Monthly stats for the viewed month
   const monthlyStats = useMemo(() => {
     const monthStr = format(viewMonth, 'yyyy-MM');
-    const monthActs = activities.filter(a => a.logged_at.startsWith(monthStr));
+    const monthActs = activities.filter(a => toSeattleMonthStr(a.logged_at) === monthStr);
     return {
       walks: monthActs.filter(a => a.activity_type === 'walk').length,
       pees: monthActs.filter(a => a.activity_type === 'pee').length,
@@ -79,7 +80,7 @@ const History = () => {
   }, [activities, viewMonth]);
 
   const getIconsForDay = (day: Date) => {
-    const dayActs = activities.filter(a => isSameDay(parseISO(a.logged_at), day));
+    const dayActs = activities.filter(a => isSameSeattleDay(a.logged_at, day));
     const types: string[] = [];
     if (dayActs.some(a => a.activity_type === 'walk')) types.push('walk');
     if (dayActs.some(a => a.activity_type === 'pee')) types.push('pee');
