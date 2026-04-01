@@ -31,9 +31,9 @@ const WeatherInsights = ({ activities }: { activities: Activity[] }) => {
     // Streak calculation
     const sortedDates = Array.from(walkDates).sort().reverse();
     let streak = 0;
-    const today = new Date();
+    const todayStr = getSeattleTodayStr();
     for (let i = 0; i < sortedDates.length; i++) {
-      const expected = new Date(today);
+      const expected = new Date(todayStr + 'T12:00:00');
       expected.setDate(expected.getDate() - i);
       const expectedStr = expected.toISOString().split('T')[0];
       if (sortedDates[i] === expectedStr) {
