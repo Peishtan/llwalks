@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { getDaysInMonth } from 'date-fns';
+import { getSeattleNow, toSeattleMonthStr, toSeattleDay } from '@/lib/timezone';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useActivities } from '@/hooks/useActivities';
