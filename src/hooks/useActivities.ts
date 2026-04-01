@@ -4,6 +4,7 @@ import { getDaysInMonth } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from './useProfile';
 import { toast } from 'sonner';
+import { getSeattleTodayStr } from '@/lib/timezone';
 
 export const useActivities = () => {
   const { user } = useAuth();
