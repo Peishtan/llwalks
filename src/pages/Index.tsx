@@ -29,9 +29,8 @@ const Index = () => {
   const walkDays = useMemo(() => {
     const days = new Set<number>();
     activities.forEach(a => {
-      if (a.activity_type === 'walk' && a.logged_at.startsWith(selectedMonthStr)) {
-        const day = new Date(a.logged_at).getDate();
-        days.add(day);
+      if (a.activity_type === 'walk' && toSeattleMonthStr(a.logged_at) === selectedMonthStr) {
+        days.add(toSeattleDay(a.logged_at));
       }
     });
     return days;

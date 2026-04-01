@@ -80,7 +80,7 @@ const History = () => {
   }, [activities, viewMonth]);
 
   const getIconsForDay = (day: Date) => {
-    const dayActs = activities.filter(a => isSameDay(parseISO(a.logged_at), day));
+    const dayActs = activities.filter(a => isSameSeattleDay(a.logged_at, day));
     const types: string[] = [];
     if (dayActs.some(a => a.activity_type === 'walk')) types.push('walk');
     if (dayActs.some(a => a.activity_type === 'pee')) types.push('pee');

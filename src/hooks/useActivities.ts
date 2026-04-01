@@ -38,9 +38,10 @@ export const useActivities = () => {
 
       // Check if there's a walk logged today for bonus
       if ((type === 'pee' || type === 'poop') && activitiesQuery.data) {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getSeattleTodayStr();
+        const { toSeattleDateStr } = await import('@/lib/timezone');
         const todayWalk = activitiesQuery.data.find(
-          a => a.activity_type === 'walk' && a.logged_at.startsWith(today)
+          a => a.activity_type === 'walk' && toSeattleDateStr(a.logged_at) === today
         );
         if (todayWalk) {
           treatsEarned += 1;

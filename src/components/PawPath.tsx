@@ -260,7 +260,7 @@ const PawPath = ({ walkDays, isRaining, selectedMonth, selectedYear, onMonthChan
 
   // LL position = today's date (0-indexed) for the current month, or latest walked day for past months
   const position = useMemo(() => {
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
     const isCurrentMonth = selectedMonth === now.getMonth() && selectedYear === now.getFullYear();
     if (isCurrentMonth) {
       return now.getDate() - 1; // today's tile
