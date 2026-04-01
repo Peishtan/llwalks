@@ -45,7 +45,7 @@ const History = () => {
 
   const dayActivities = useMemo(() => {
     if (!selectedDate) return [];
-    return activities.filter(a => isSameDay(parseISO(a.logged_at), selectedDate));
+    return activities.filter(a => isSameSeattleDay(a.logged_at, selectedDate));
   }, [selectedDate, activities]);
 
   const consolidatedActivities = useMemo(() => {
